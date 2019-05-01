@@ -5,6 +5,11 @@
       - bash-completion
     state: present
 
+- name: /etc/bash_completion.d present
+  file:
+    path: /etc/bash_completion.d
+    state: directory
+
 - name: WP-CLI installed
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
