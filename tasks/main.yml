@@ -1,4 +1,10 @@
 ---
+- name: Programmable completion for the bash shell present
+  apt:
+    pkg:
+      - bash-completion
+    state: present
+
 - name: WP-CLI installed
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
