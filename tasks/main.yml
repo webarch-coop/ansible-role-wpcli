@@ -4,11 +4,15 @@
     pkg:
       - bash-completion
     state: present
+  tags:
+    - wpcli
 
 - name: /etc/bash_completion.d present
   file:
     path: /etc/bash_completion.d
     state: directory
+  tags:
+    - wpcli
 
 - name: WP-CLI installed
   get_url:
@@ -27,3 +31,4 @@
     mode: 0644
   tags:
     - wpcli
+...
