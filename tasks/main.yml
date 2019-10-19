@@ -51,7 +51,7 @@
       tags:
         - wpcli
 
-    - name: wp-cli URI 
+    - name: Debug wp-cli URI 
       debug:
         msg:
           - "Location: {{ wpcli_headers.location }}"  
@@ -61,17 +61,10 @@
       tags:
         - wpcli
 
-    - name: Set a fact for the latest version of wp-cli 
-      shell: "echo {{ wpcli_headers.location }} | awk -F '/' '{ print $8 }'"
-      register: wpcli_version
-      changed_when: false
-      tags:
-        - wpcli
-
-    - name: wp-cli latest version
-      debug:
-        msg: "Latest version available: {{ wpcli_version.stdout }}"  
-        verbosity: 1
+    - name: Set a fact if a newer version is available 
+      set_fact:
+        wpcli_upgrade: true
+      when: wpcli_version_installed.stdout not in wpcli_headers.location | urlsplit('path') | basename
       tags:
         - wpcli
 
