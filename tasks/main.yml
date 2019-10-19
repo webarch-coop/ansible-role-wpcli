@@ -51,25 +51,24 @@
       tags:
         - wpcli
 
-    - name: Debug HTTP Location 
+    - name: wp-cli URI 
       debug:
         msg: "Location: {{ wpcli_headers.location }}"  
         verbosity: 1
       tags:
         - wpcli
 
-#    - name: Check the latest version of wp-cli
-#      shell: lynx -head -dump https://github.com/wp-cli/wp-cli/releases/latest | grep Location | awk '{ print $2 }' | awk -F '/' '{ print $8 }'
-#      check_mode: false
-#      register: wpcli_version
-#      changed_when: wpcli_version_installed.stdout not in wpcli_version.stdout
-#      tags:
-#        - wpcli
+    - name: Set a fact for the latest version of wp-cli 
+      shell: "echo {{ wpcli_headers.location }} | awk -F '/' '{ print $8 }'"
+      register: wpcli_version
+      changed_when: false
+      tags:
+        - wpcli
 
-    - name: Set a fact to indicate that a wp-cli upgrade is needed
-      set_fact:
-        wpcli_upgrade: true
-      when: wpcli_version_installed.stdout not in wpcli_headers
+    - name: wp-cli latest version
+      debug:
+        msg: "Latest version available: {{ wpcli_version.stdout }}"  
+        verbosity: 1
       tags:
         - wpcli
 
