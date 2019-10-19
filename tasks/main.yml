@@ -53,7 +53,9 @@
 
     - name: wp-cli URI 
       debug:
-        msg: "Location: {{ wpcli_headers.location }}"  
+        msg:
+          - "Location: {{ wpcli_headers.location }}"  
+          - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
         verbosity: 1
       tags:
         - wpcli
