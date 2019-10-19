@@ -51,17 +51,17 @@
       tags:
         - wpcli
 
-    - name: Debug wp-cli URI 
+    - name: Debug wp-cli URI
       debug:
         msg:
-          - "Location: {{ wpcli_headers.location }}"  
+          - "Location: {{ wpcli_headers.location }}"
           - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
           - "Version: {{ wpcli_headers.location | urlsplit('path') | basename }}"
         verbosity: 1
       tags:
         - wpcli
 
-    - name: Set a fact if a newer version is available 
+    - name: Set a fact if a newer version is available
       set_fact:
         wpcli_upgrade: true
       when: wpcli_version_installed.stdout not in wpcli_headers.location | urlsplit('path') | basename
