@@ -14,21 +14,68 @@
   tags:
     - wpcli
 
-- name: WP-CLI installed
-  get_url:
-    url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
-    dest: /usr/local/bin/wp
-    force: true
-    mode: 0755
+- name: Check if wp-cli is installed
+  shell: which wp || echo absent
+  check_mode: false
+  register: wpcli_path
+  changed_when: '"wp" not in wpcli_path.stdout'
   tags:
     - wpcli
 
-- name: WP-CLI Bash completion installed
-  get_url:
-    url: "https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash"
-    dest: /etc/bash_completion.d/wp-completion.bash
-    force: true
-    mode: 0644
-  tags:
-    - wpcli
+- name: Check the latest version of wp-cli
+  block:
+
+    - name: Check what version of wp-cli is installed
+      shell: wp --version --allow-root | awk '{ print $2 }'
+      check_mode: false
+      register: wpcli_version_installed
+      tags:
+        - wpcli
+
+    - name: Print the installed version of wp-cli
+      debug:
+        msg: "wp-cli version {{ wpcli_version_installed.stdout }} is installed"
+        verbosity: 1
+      tags:
+        - wpcli
+
+    - name: Check the latest version of wp-cli
+      shell: lynx -head -dump https://github.com/wp-cli/wp-cli/releases/latest | grep Location | awk '{ print $2 }' | awk -F '/' '{ print $8 }'
+      check_mode: false
+      register: wpcli_version
+      changed_when: wpcli_version_installed.stdout not in wpcli_version.stdout
+      tags:
+        - wpcli
+
+    - name: Set a fact to indicate that a wp-cli upgrade is needed
+      set_fact:
+        wpcli_upgrade: true
+      when: wpcli_version_installed.stdout not in wpcli_version.stdout
+      tags:
+        - wpcli
+
+  when: '"wp" in wpcli_path.stdout'
+
+- name: Install or upgrade wp-cli
+  block:
+
+    - name: wp-cli installed
+      get_url:
+        url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+        dest: /usr/local/bin/wp
+        force: true
+        mode: 0755
+      tags:
+        - wpcli
+
+    - name: wp-cli Bash completion installed
+      get_url:
+        url: "https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash"
+        dest: /etc/bash_completion.d/wp-completion.bash
+        force: true
+        mode: 0644
+      tags:
+        - wpcli
+
+  when: ( "absent" in wpcli_path.stdout ) or ( wpcli_upgrade is defined and wpcli_upgrade == True )
 ...
