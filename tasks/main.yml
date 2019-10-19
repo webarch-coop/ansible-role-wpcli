@@ -29,6 +29,7 @@
       shell: wp --version --allow-root | awk '{ print $2 }'
       check_mode: false
       register: wpcli_version_installed
+      changed_when: false
       tags:
         - wpcli
 
