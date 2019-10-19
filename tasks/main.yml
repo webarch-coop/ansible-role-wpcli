@@ -53,7 +53,7 @@
 
     - name: Debug HTTP headers
       debug:
-        msg: "HTTP Headers? {{ wpcli_headers.content }}"  
+        msg: "HTTP Headers? {{ wpcli_headers.location }}"  
       tags:
         - wpcli
 
