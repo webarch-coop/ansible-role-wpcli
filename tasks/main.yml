@@ -41,6 +41,21 @@
         - wpcli
 
     - name: Check the latest version of wp-cli
+      uri:
+        url: https://github.com/wp-cli/wp-cli/releases/latest
+        follow_redirects: none
+        return_content: true
+      register: wpcli_headers
+      tags:
+        - wpcli
+
+    - name: Debug HTTP headers
+      debug:
+        msg: "HTTP Headers? {{ wpcli_headers.content }}"  
+      tags:
+        - wpcli
+
+    - name: Check the latest version of wp-cli
       shell: lynx -head -dump https://github.com/wp-cli/wp-cli/releases/latest | grep Location | awk '{ print $2 }' | awk -F '/' '{ print $8 }'
       check_mode: false
       register: wpcli_version
