@@ -46,7 +46,6 @@
         method: HEAD
         status_code: 302
         follow_redirects: none
-        return_content: true
       register: wpcli_headers
       tags:
         - wpcli
