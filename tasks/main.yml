@@ -56,7 +56,7 @@
         msg:
           - "Location: {{ wpcli_headers.location }}"  
           - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
-          - "Version: {{ wpcli_headers.location | urlsplit('path') | regex_search('("^(.*\\)?(.*)")') }}"
+          - "Version: {{ wpcli_headers.location | urlsplit('path') | basename }}"
         verbosity: 1
       tags:
         - wpcli
