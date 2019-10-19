@@ -44,6 +44,7 @@
       uri:
         url: https://github.com/wp-cli/wp-cli/releases/latest
         method: HEAD
+        status_code: 302
         follow_redirects: none
         return_content: true
       register: wpcli_headers
