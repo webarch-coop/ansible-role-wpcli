@@ -30,15 +30,11 @@
       check_mode: false
       register: wpcli_version_installed
       changed_when: false
-      tags:
-        - wpcli
 
     - name: Print the installed version of wp-cli
       debug:
         msg: "wp-cli version {{ wpcli_version_installed.stdout }} is installed"
         verbosity: 1
-      tags:
-        - wpcli
 
     - name: Check the latest version of wp-cli
       uri:
@@ -48,8 +44,6 @@
         follow_redirects: none
       check_mode: false
       register: wpcli_headers
-      tags:
-        - wpcli
 
     - name: Debug wp-cli URI
       debug:
@@ -58,17 +52,15 @@
           - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
           - "Version: {{ wpcli_headers.location | urlsplit('path') | basename }}"
         verbosity: 1
-      tags:
-        - wpcli
 
     - name: Set a fact if a newer version is available
       set_fact:
         wpcli_upgrade: true
       when: wpcli_version_installed.stdout not in wpcli_headers.location | urlsplit('path') | basename
-      tags:
-        - wpcli
 
   when: '"wp" in wpcli_path.stdout'
+  tags:
+    - wpcli
 
 - name: Install or upgrade wp-cli
   block:
@@ -79,8 +71,6 @@
         dest: /usr/local/bin/wp
         force: true
         mode: 0755
-      tags:
-        - wpcli
 
     - name: wp-cli Bash completion installed
       get_url:
@@ -88,8 +78,8 @@
         dest: /etc/bash_completion.d/wp-completion.bash
         force: true
         mode: 0644
-      tags:
-        - wpcli
 
   when: ( "absent" in wpcli_path.stdout ) or ( wpcli_upgrade is defined and wpcli_upgrade == True )
+  tags:
+    - wpcli
 ...
