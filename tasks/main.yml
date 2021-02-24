@@ -17,10 +17,11 @@
         mode: 0644
 
     - name: Check if WP-CLI is installed
-      shell: which wp || echo absent
-      register: wpcli_path
+      command: which wp
       check_mode: false
       changed_when: false
+      register: wpcli_path
+      failed_when: wpcli_path.rc is not regex('0|1')
 
     - name: Check the latest version of WP-CLI
       block:
@@ -61,7 +62,7 @@
           set_fact:
             wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
 
-      when: wpcli_path.stdout is regex('wp$')
+      when: wpcli_path.rc == 1
 
     - name: Install or upgrade WP-CLI
       block:
@@ -80,7 +81,7 @@
             force: true
             mode: 0644
 
-      when: ( "absent" in wpcli_path.stdout ) or ( wpcli_installed is version('wpcli_latest', '<')
+      when: ( "absent" in wpcli_path.stdout ) or ( wpcli_installed is version(wpcli_latest, '<')
 
   tags:
     - wpcli
