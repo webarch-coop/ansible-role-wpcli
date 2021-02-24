@@ -62,26 +62,46 @@
           set_fact:
             wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
 
-      when: wpcli_path.rc == 1
+      when: wpcli_path.rc == 0
 
     - name: Install or upgrade WP-CLI
       block:
 
-        - name: WP-CLI installed
+        - name: WP-CLI downloaded
           get_url:
-            url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
-            dest: /usr/local/bin/wp
+            url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            dest: /root/wp
             force: true
-            mode: 0755
+            owner: root
+            group: root
+            mode: 0600
+          check_mode: false
 
+        - name: Downloaded version of WP-CLI tested
+          command: php /root/wp --info
+          check_mode: flase
+          register: wpcli_info
+
+        - name: WP-CLI in place
+          copy:
+            src: /root/wp
+            dest: /usr/local/bin/wp
+            remote_src: true
+            owner: root
+            group: root
+            mode: 0755
+         when: ( "WP-CLI version" in wpcli_info.stdout )
+          
         - name: WP-CLI Bash completion installed
           get_url:
-            url: "https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash"
+            url: https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
             dest: /etc/bash_completion.d/wp-completion.bash
             force: true
+            owner: root
+            group: root
             mode: 0644
 
-      when: ( "absent" in wpcli_path.stdout ) or ( wpcli_installed is version(wpcli_latest, '<')
+      when: ( wpcli_path.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<')
 
   tags:
     - wpcli
