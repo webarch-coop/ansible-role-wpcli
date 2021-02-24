@@ -23,7 +23,7 @@
       register: wpcli_path
       failed_when: wpcli_path.rc is not regex('0|1')
 
-    - name: Check the nstalled and latest version of WP-CLI
+    - name: Check the installed and latest version of WP-CLI
       block:
 
         - name: Check what version of WP-CLI is installed
