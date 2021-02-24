@@ -1,36 +1,15 @@
 ---
 dependency:
   name: galaxy
-
-driver:
-  name: docker
-
-lint:
-  name: yamllint
-
 platforms:
   - name: instance
-    image: registry.git.coop/webarch/containers/images/ansible:0.2
+    image: registry.git.coop/webarch/containers/images/ansible:0.5.0
     pre_build_image: true
-
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-
-scenario:
-  name: default
-  test_sequence:
-    - lint
-    - destroy
-    - dependency
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - side_effect
-    - verify
-    - cleanup
-    - destroy
+lint: |
+ set -e
+  yamllint -c .yamllint .
+  ansible-lint -c .ansible-lint --force-color .
+# vim: syntax=yaml
 ...
