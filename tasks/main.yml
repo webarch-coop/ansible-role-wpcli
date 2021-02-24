@@ -54,12 +54,12 @@
             msg:
               - "Location: {{ wpcli_headers.location }}"
               - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
-              - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace(^v') }}"
+              - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
             verbosity: 1
 
         - name: Set a fact for the latest version of WP-CLI
           set_fact:
-            wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace(^v') }}"
+            wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
 
       when: wpcli_path.stdout is regex('wp$')
 
