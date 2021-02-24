@@ -101,7 +101,7 @@
             group: root
             mode: 0644
 
-      when: ( wpcli_path.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<')
+      when: ( wpcli_path.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<') )
 
   tags:
     - wpcli
