@@ -2,13 +2,13 @@
 - name: Install or upgrade WP-CLI
   block:
 
-    - name: Programmable completion for the bash shell present
+    - name: Programmable completion for the Bash shell present
       apt:
         pkg:
           - bash-completion
         state: present
 
-    - name: /etc/bash_completion.d present
+    - name: Directory /etc/bash_completion.d present
       file:
         path: /etc/bash_completion.d
         state: directory
@@ -90,8 +90,8 @@
             owner: root
             group: root
             mode: 0755
-         when: ( "WP-CLI version" in wpcli_info.stdout )
-          
+          when: ( "WP-CLI version" in wpcli_info.stdout )
+
         - name: WP-CLI Bash completion installed
           get_url:
             url: https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
