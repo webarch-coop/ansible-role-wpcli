@@ -14,7 +14,7 @@
         state: directory
         owner: root
         group: root
-        mode: 0644
+        mode: 0755
 
     - name: Check if WP-CLI is installed
       command: which wp
