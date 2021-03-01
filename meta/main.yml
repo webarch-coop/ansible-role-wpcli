@@ -5,7 +5,7 @@ galaxy_info:
   description: Ansible role for installing WP CLI on Debian servers
   company: Webarchitects Co-operative
   license: license (GPLv3)
-  min_ansible_version: 2.3
+  min_ansible_version: 2.8
   platforms:
     - name: debian
       versions:

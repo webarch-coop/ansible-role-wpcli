@@ -56,7 +56,7 @@
               - "Location: {{ wpcli_headers.location }}"
               - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
               - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
-            verbosity: 1
+            verbosity: 2
 
         - name: Set a fact for the latest version of WP-CLI
           set_fact:
