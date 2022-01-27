@@ -83,7 +83,7 @@
           register: wpcli_gpg_import
           changed_when: ( "not changed" not in wpcli_gpg_import.stderr )
 
-        - name: WP-CLI and GPG signature present
+        - name: WP-CLI, GPG signature and Bash completion present
           ansible.builtin.get_url:
             url: "{{ url }}"
             dest: "{{ wpcli_download_dir }}/"
@@ -94,6 +94,7 @@
           loop:
             - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
             - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar"
+            - "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_latest }}/utils/wp-completion.bash"
           loop_control:
             loop_var: url
 
@@ -117,14 +118,15 @@
             mode: 0755
             validate: php %s --info
 
-        - name: WP-CLI Bash completion installed
-          ansible.builtin.get_url:
-            url: https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
+        - name: WP-CLI Bash completion in place
+          ansible.builtin.copy:
+            src: "{{ wpcli_download_dir }}/wp-completion.bash"
             dest: /etc/bash_completion.d/wp-completion.bash
-            force: true
+            remote_src: true
             owner: root
             group: root
             mode: 0644
+            validate: bash %s
 
       when: ( wpcli_which.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<') )
 
