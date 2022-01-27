@@ -2,11 +2,12 @@
 - name: Install or upgrade WP-CLI
   block:
 
-    - name: GPG and programmable completion for the Bash shell present
+    - name: PHP CLI, GPG and programmable completion for the Bash shell present
       ansible.builtin.apt:
         pkg:
           - bash-completion
           - gnupg
+          - php-cli
         state: present
 
     - name: Directory /etc/bash_completion.d present
