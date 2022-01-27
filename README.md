@@ -11,7 +11,10 @@ is also [mirrored to
 GitHub](https://github.com/webarch-coop/ansible-role-wpcli) and [available via
 Ansible Galaxy](https://galaxy.ansible.com/chriscroome/wpcli).
 
+See the [GitLab releases page](https://git.coop/webarch/wpcli/-/releases) for
+details regarding each version.
 
-This role can also be used with the [localhost repo](https://git.coop/webarch/localhost) to install WP-CLI locally.
+This role can also be used with the [localhost
+repo](https://git.coop/webarch/localhost) to install WP-CLI locally.
 
 See also the [WordPress role](https://git.coop/webarch/wordpress).
