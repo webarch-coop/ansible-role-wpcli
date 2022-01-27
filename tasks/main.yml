@@ -75,21 +75,23 @@
           register: wpcli_gpg_import
           changed_when: ( "not changed" not in wpcli_gpg_import.stderr )
 
-        - name: WP-CLI, GPG signature and Bash completion present
+        - name: WP-CLI GPG signature present
           ansible.builtin.get_url:
-            url: "{{ url }}"
-            dest: "{{ wpcli_download_dir }}/"
+            url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
+            dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc"
             owner: root
             group: root
             mode: 0600
-          loop:
-            - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
-            - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar"
-            - "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_latest }}/utils/wp-completion.bash"
-          loop_control:
-            loop_var: url
 
-        - name: GPG signature verified
+        - name: WP-CLI present
+          ansible.builtin.get_url:
+            url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar"
+            dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
+            owner: root
+            group: root
+            mode: 0600
+
+        - name: WP-CLI GPG signature verified
           ansible.builtin.command: >
             gpg --no-tty --verify --logger-fd 1
             {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc
@@ -117,7 +119,7 @@
             group: root
             mode: 0755
 
-        - name: WP-CLI, GPG signature and Bash completion present
+        - name: WP-CLI Bash completion present
           ansible.builtin.get_url:
             url: "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_latest }}/utils/wp-completion.bash"
             dest: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
