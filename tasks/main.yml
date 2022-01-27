@@ -19,17 +19,21 @@
         mode: 0755
 
     - name: Run which to check if and where WP-CLI is installed
-      ansible.builtin.command: which wp
+      ansible.builtin.command: "which {{ wpcli_executable }}"
       check_mode: false
       changed_when: false
-      register: wpcli_path
-      failed_when: wpcli_path.rc is not regex('0|1')
+      register: wpcli_which
+      failed_when: wpcli_which.rc is not regex('0|1')
+
+    - name: Set a fact for the WP-CLI path
+      set_fact:
+        wpcli_path: "{% if wpcli_which.rc == 0 }}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/{{ wpcli_executable }}{% endif %}"
 
     - name: Check the installed version of WP-CLI
       block:
 
         - name: Check which version of WP-CLI is installed
-          ansible.builtin.command: wp --version --allow-root
+          ansible.builtin.command: "{{ wpcli_path }} --version --allow-root"
           register: wpcli_version_check
           check_mode: false
           changed_when: false
@@ -40,7 +44,7 @@
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
-            msg: "WP-CLI version {{ wpcli_installed }} is installed at {{ wpcli_path.stdout }}"
+            msg: "WP-CLI version {{ wpcli_installed }} is installed at {{ wpcli_path }}"
             verbosity: 1
 
       when: wpcli_path.rc == 0
@@ -106,7 +110,7 @@
         - name: WP-CLI in place
           ansible.builtin.copy:
             src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
-            dest: "{{ wpcli_path | default(wpcli_executable_path) }}"
+            dest: "{{ wpcli_path }}"
             remote_src: true
             owner: root
             group: root
@@ -122,7 +126,7 @@
             group: root
             mode: 0644
 
-      when: ( wpcli_path.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<') )
+      when: ( wpcli_which.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<') )
 
   tags:
     - wpcli
