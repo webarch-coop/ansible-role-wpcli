@@ -2,10 +2,11 @@
 - name: Install or upgrade WP-CLI
   block:
 
-    - name: Programmable completion for the Bash shell present
+    - name: GPG and programmable completion for the Bash shell present
       apt:
         pkg:
           - bash-completion
+          - gnupg
         state: present
 
     - name: Directory /etc/bash_completion.d present
@@ -67,24 +68,49 @@
     - name: Install or upgrade WP-CLI
       block:
 
-        - name: WP-CLI downloaded
+        - name: WP-CLI GPG public key present
+          copy:
+            src: A3A2E8F226F0BC06.asc
+            dest: /root/A3A2E8F226F0BC06.asc
+            mode: 0600
+
+        - name: WP-CLI GPG public key imported
+          command: gpg --no-tty --import /root/A3A2E8F226F0BC06.asc
+          register: wpcli_gpg_import
+          changed_when: ( "not changed" not in wpcli_gpg_import.stderr )
+
+        - name: WP-CLI and GPG signature present
           get_url:
-            url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            dest: /root/wp
+            url: "{{ url }}"
+            dest: /root/
             force: true
             owner: root
             group: root
             mode: 0600
+          loop:
+            - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
+            - "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar"
+          loop_control:
+            loop_var: url
+
+        - name: GPG signature verified
+          command: >
+            gpg --no-tty --verify --logger-fd 1
+            /root/wp-cli-{{ wpcli_latest }}.phar.asc
+            /root/wp-cli-{{ wpcli_latest }}.phar
           check_mode: false
+          changed_when: false
+          register: wpcli_gpg_verify
+          failed_when: ( "Good signature from" not in wpcli_gpg_verify.stdout )
 
         - name: Downloaded version of WP-CLI tested
-          command: php /root/wp --info
+          command: php /root/wp-cli-{{ wpcli_latest }}.phar --info
           check_mode: false
           register: wpcli_info
 
         - name: WP-CLI in place
           copy:
-            src: /root/wp
+            src: /root/wp-cli-{{ wpcli_latest }}.phar
             dest: /usr/local/bin/wp
             remote_src: true
             owner: root
