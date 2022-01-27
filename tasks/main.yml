@@ -3,14 +3,14 @@
   block:
 
     - name: GPG and programmable completion for the Bash shell present
-      apt:
+      ansible.builtin.apt:
         pkg:
           - bash-completion
           - gnupg
         state: present
 
     - name: Directory /etc/bash_completion.d present
-      file:
+      ansible.builtin.file:
         path: /etc/bash_completion.d
         state: directory
         owner: root
@@ -18,7 +18,7 @@
         mode: 0755
 
     - name: Check if WP-CLI is installed
-      command: which wp
+      ansible.builtin.command: which wp
       check_mode: false
       changed_when: false
       register: wpcli_path
@@ -28,22 +28,22 @@
       block:
 
         - name: Check what version of WP-CLI is installed
-          command: wp --version --allow-root
+          ansible.builtin.command: wp --version --allow-root
           register: wpcli_version_check
           check_mode: false
           changed_when: false
 
         - name: Set a fact for the installed version of WP-CLI
-          set_fact:
+          ansible.builtin.set_fact:
             wpcli_installed: "{{ wpcli_version_check.stdout | regex_replace('^WP-CLI ') }}"
 
         - name: Print the installed version of WP-CLI
-          debug:
+          ansible.builtin.debug:
             msg: "WP-CLI version {{ wpcli_installed }} is installed"
             verbosity: 1
 
         - name: Check the latest version of WP-CLI
-          uri:
+          ansible.builtin.uri:
             url: https://github.com/wp-cli/wp-cli/releases/latest
             method: HEAD
             status_code: 302
@@ -52,7 +52,7 @@
           register: wpcli_headers
 
         - name: Debug WP-CLI URI
-          debug:
+          ansible.builtin.debug:
             msg:
               - "Location: {{ wpcli_headers.location }}"
               - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
@@ -60,7 +60,7 @@
             verbosity: 2
 
         - name: Set a fact for the latest version of WP-CLI
-          set_fact:
+          ansible.builtin.set_fact:
             wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
 
       when: wpcli_path.rc == 0
@@ -69,18 +69,18 @@
       block:
 
         - name: WP-CLI GPG public key present
-          copy:
+          ansible.builtin.copy:
             src: A3A2E8F226F0BC06.asc
             dest: /root/A3A2E8F226F0BC06.asc
             mode: 0600
 
         - name: WP-CLI GPG public key imported
-          command: gpg --no-tty --import /root/A3A2E8F226F0BC06.asc
+          ansible.builtin.command: gpg --no-tty --import /root/A3A2E8F226F0BC06.asc
           register: wpcli_gpg_import
           changed_when: ( "not changed" not in wpcli_gpg_import.stderr )
 
         - name: WP-CLI and GPG signature present
-          get_url:
+          ansible.builtin.get_url:
             url: "{{ url }}"
             dest: /root/
             force: true
@@ -94,7 +94,7 @@
             loop_var: url
 
         - name: GPG signature verified
-          command: >
+          ansible.builtin.command: >
             gpg --no-tty --verify --logger-fd 1
             /root/wp-cli-{{ wpcli_latest }}.phar.asc
             /root/wp-cli-{{ wpcli_latest }}.phar
@@ -104,12 +104,12 @@
           failed_when: ( "Good signature from" not in wpcli_gpg_verify.stdout )
 
         - name: Downloaded version of WP-CLI tested
-          command: php /root/wp-cli-{{ wpcli_latest }}.phar --info
+          ansible.builtin.command: php /root/wp-cli-{{ wpcli_latest }}.phar --info
           check_mode: false
           register: wpcli_info
 
         - name: WP-CLI in place
-          copy:
+          ansible.builtin.copy:
             src: /root/wp-cli-{{ wpcli_latest }}.phar
             dest: /usr/local/bin/wp
             remote_src: true
@@ -119,7 +119,7 @@
           when: ( "WP-CLI version" in wpcli_info.stdout )
 
         - name: WP-CLI Bash completion installed
-          get_url:
+          ansible.builtin.get_url:
             url: https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
             dest: /etc/bash_completion.d/wp-completion.bash
             force: true
