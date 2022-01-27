@@ -104,12 +104,6 @@
           register: wpcli_gpg_verify
           failed_when: ( "Good signature from" not in wpcli_gpg_verify.stdout )
 
-        - name: Downloaded version of WP-CLI tested
-          ansible.builtin.command: php /root/wp-cli-{{ wpcli_latest }}.phar --info
-          check_mode: false
-          changed_when: false
-          register: wpcli_info
-
         - name: WP-CLI in place
           ansible.builtin.copy:
             src: /root/wp-cli-{{ wpcli_latest }}.phar
@@ -118,7 +112,7 @@
             owner: root
             group: root
             mode: 0755
-          when: ( "WP-CLI version" in wpcli_info.stdout )
+            validate: php %s --info 
 
         - name: WP-CLI Bash completion installed
           ansible.builtin.get_url:
