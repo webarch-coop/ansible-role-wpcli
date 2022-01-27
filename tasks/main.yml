@@ -47,7 +47,7 @@
             msg: "WP-CLI version {{ wpcli_installed }} is installed at {{ wpcli_path }}"
             verbosity: 1
 
-      when: wpcli_path.rc == 0
+      when: wpcli_which.rc == 0
 
     - name: Check the latest available version of WP-CLI
       ansible.builtin.uri:
