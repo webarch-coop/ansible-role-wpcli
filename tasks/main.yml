@@ -10,16 +10,8 @@
           - php-cli
         state: present
 
-    - name: Directory /etc/bash_completion.d present
-      ansible.builtin.file:
-        path: /etc/bash_completion.d
-        state: directory
-        owner: root
-        group: root
-        mode: 0755
-
     - name: Run which to check if and where WP-CLI is installed
-      ansible.builtin.command: "which {{ wpcli_executable }}"
+      ansible.builtin.command: "which wp"
       check_mode: false
       changed_when: false
       register: wpcli_which
@@ -27,7 +19,7 @@
 
     - name: Set a fact for the WP-CLI path
       set_fact:
-        wpcli_path: "{% if wpcli_which.rc == 0 %}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/{{ wpcli_executable }}{% endif %}"
+        wpcli_path: "{% if wpcli_which.rc == 0 %}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/wp{% endif %}"
 
     - name: Check the installed version of WP-CLI
       block:
@@ -87,7 +79,6 @@
           ansible.builtin.get_url:
             url: "{{ url }}"
             dest: "{{ wpcli_download_dir }}/"
-            force: true
             owner: root
             group: root
             mode: 0600
@@ -118,15 +109,30 @@
             mode: 0755
             validate: php %s --info
 
+        - name: Directory /etc/bash_completion.d present
+          ansible.builtin.file:
+            path: /etc/bash_completion.d
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+
+        - name: WP-CLI, GPG signature and Bash completion present
+          ansible.builtin.get_url:
+            url: "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_latest }}/utils/wp-completion.bash"
+            dest: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
+            owner: root
+            group: root
+            mode: 0600
+
         - name: WP-CLI Bash completion in place
           ansible.builtin.copy:
-            src: "{{ wpcli_download_dir }}/wp-completion.bash"
+            src: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
             dest: /etc/bash_completion.d/wp-completion.bash
             remote_src: true
             owner: root
             group: root
             mode: 0644
-            validate: bash %s
 
       when: ( wpcli_which.rc == 1 ) or ( wpcli_installed is version(wpcli_latest, '<') )
 

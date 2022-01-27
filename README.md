@@ -13,13 +13,12 @@ This role:
 * Checks the GPG signature of WP-CLI after downloding it.
 * Checks that WP-CLI works before installing it.
 
-There are three [default variables](defaults/main.yml):
+There are two [default variables](defaults/main.yml):
 
 | Variable name        | Default value    | Comment                                                                 |
 |----------------------|------------------|-------------------------------------------------------------------------|
 | `wpcli_bin`          | `/usr/local/bin` | The directory that WP-CLI will be installed to if not already installed |
-| `wpcli_executable`   | `wp`             | The name to be used for the `.phar` file                                |
-| `wpcli_download_dir` | `/root`          | The the directory used for downloading files to.                        |
+| `wpcli_download_dir` | `/root`          | The directory used for downloading files to.                            |
 
 The primary URL of this repo is
 [`https://git.coop/webarch/wpcli`](https://git.coop/webarch/wpcli) however it

@@ -1,5 +1,4 @@
 ---
 wpcli_bin: /usr/local/bin
-wpcli_executable: wp
 wpcli_download_dir: /root
 ...
