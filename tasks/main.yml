@@ -42,28 +42,28 @@
             msg: "WP-CLI version {{ wpcli_installed }} is installed"
             verbosity: 1
 
-        - name: Check the latest version of WP-CLI
-          ansible.builtin.uri:
-            url: https://github.com/wp-cli/wp-cli/releases/latest
-            method: HEAD
-            status_code: 302
-            follow_redirects: none
-          check_mode: false
-          register: wpcli_headers
-
-        - name: Debug WP-CLI URI
-          ansible.builtin.debug:
-            msg:
-              - "Location: {{ wpcli_headers.location }}"
-              - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
-              - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
-            verbosity: 2
-
-        - name: Set a fact for the latest version of WP-CLI
-          ansible.builtin.set_fact:
-            wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
-
       when: wpcli_path.rc == 0
+
+    - name: Check the latest version of WP-CLI
+      ansible.builtin.uri:
+        url: https://github.com/wp-cli/wp-cli/releases/latest
+        method: HEAD
+        status_code: 302
+        follow_redirects: none
+      check_mode: false
+      register: wpcli_headers
+
+    - name: Debug WP-CLI URI
+      ansible.builtin.debug:
+        msg:
+          - "Location: {{ wpcli_headers.location }}"
+          - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
+          - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
+        verbosity: 2
+
+    - name: Set a fact for the latest version of WP-CLI
+      ansible.builtin.set_fact:
+        wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
 
     - name: Install or upgrade WP-CLI
       block:
