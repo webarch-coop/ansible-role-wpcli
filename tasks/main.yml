@@ -27,7 +27,7 @@
 
     - name: Set a fact for the WP-CLI path
       set_fact:
-        wpcli_path: "{% if wpcli_which.rc == 0 }}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/{{ wpcli_executable }}{% endif %}"
+        wpcli_path: "{% if wpcli_which.rc == 0 %}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/{{ wpcli_executable }}{% endif %}"
 
     - name: Check the installed version of WP-CLI
       block:
