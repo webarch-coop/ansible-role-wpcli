@@ -28,6 +28,11 @@
     - name: Check the installed version of WP-CLI
       block:
 
+        - name: Fail if the WP-CLI installed is in a different location from the one to potentially be updated
+          assert:
+            that:
+              - wpcli_path.stdout == wpcli_executable_path
+
         - name: Check what version of WP-CLI is installed
           ansible.builtin.command: wp --version --allow-root
           register: wpcli_version_check
@@ -71,18 +76,18 @@
         - name: WP-CLI GPG public key present
           ansible.builtin.copy:
             src: A3A2E8F226F0BC06.asc
-            dest: /root/A3A2E8F226F0BC06.asc
+            dest: "{{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
             mode: 0600
 
         - name: WP-CLI GPG public key imported
-          ansible.builtin.command: gpg --no-tty --import /root/A3A2E8F226F0BC06.asc
+          ansible.builtin.command: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
           register: wpcli_gpg_import
           changed_when: ( "not changed" not in wpcli_gpg_import.stderr )
 
         - name: WP-CLI and GPG signature present
           ansible.builtin.get_url:
             url: "{{ url }}"
-            dest: /root/
+            dest: "{{ wpcli_download_dir }}/"
             force: true
             owner: root
             group: root
@@ -96,8 +101,8 @@
         - name: GPG signature verified
           ansible.builtin.command: >
             gpg --no-tty --verify --logger-fd 1
-            /root/wp-cli-{{ wpcli_latest }}.phar.asc
-            /root/wp-cli-{{ wpcli_latest }}.phar
+            {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc
+            {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar
           check_mode: false
           changed_when: false
           register: wpcli_gpg_verify
@@ -105,8 +110,8 @@
 
         - name: WP-CLI in place
           ansible.builtin.copy:
-            src: /root/wp-cli-{{ wpcli_latest }}.phar
-            dest: /usr/local/bin/wp
+            src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
+            dest: "{{ wpcli_executable_path }}" 
             remote_src: true
             owner: root
             group: root
