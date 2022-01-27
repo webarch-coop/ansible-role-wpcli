@@ -107,6 +107,7 @@
         - name: Downloaded version of WP-CLI tested
           ansible.builtin.command: php /root/wp-cli-{{ wpcli_latest }}.phar --info
           check_mode: false
+          changed_when: false
           register: wpcli_info
 
         - name: WP-CLI in place
