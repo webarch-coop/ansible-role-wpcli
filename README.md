@@ -1,4 +1,4 @@
-# Ansible Debian WordPress Command Line Interface Role 
+# Ansible WordPress Command Line Interface (WP-CLI) Role 
 
 [![pipeline status](https://git.coop/webarch/wpcli/badges/master/pipeline.svg)](https://git.coop/webarch/wpcli/-/commits/master)
 
