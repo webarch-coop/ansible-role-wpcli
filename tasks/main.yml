@@ -18,7 +18,7 @@
         group: root
         mode: 0755
 
-    - name: Run which to check if WP-CLI is installed
+    - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command: which wp
       check_mode: false
       changed_when: false
@@ -28,12 +28,7 @@
     - name: Check the installed version of WP-CLI
       block:
 
-        - name: Fail if the WP-CLI installed is in a different location from the one to potentially be updated
-          assert:
-            that:
-              - wpcli_path.stdout == wpcli_executable_path
-
-        - name: Check what version of WP-CLI is installed
+        - name: Check which version of WP-CLI is installed
           ansible.builtin.command: wp --version --allow-root
           register: wpcli_version_check
           check_mode: false
@@ -45,12 +40,12 @@
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
-            msg: "WP-CLI version {{ wpcli_installed }} is installed"
+            msg: "WP-CLI version {{ wpcli_installed }} is installed at {{ wpcli_path.stdout }}"
             verbosity: 1
 
       when: wpcli_path.rc == 0
 
-    - name: Check the latest version of WP-CLI
+    - name: Check the latest available version of WP-CLI
       ansible.builtin.uri:
         url: https://github.com/wp-cli/wp-cli/releases/latest
         method: HEAD
@@ -111,7 +106,7 @@
         - name: WP-CLI in place
           ansible.builtin.copy:
             src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
-            dest: "{{ wpcli_executable_path }}"
+            dest: "{{ wpcli_path | default(wpcli_executable_path) }}"
             remote_src: true
             owner: root
             group: root
