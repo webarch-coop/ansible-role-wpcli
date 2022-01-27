@@ -111,7 +111,7 @@
         - name: WP-CLI in place
           ansible.builtin.copy:
             src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
-            dest: "{{ wpcli_executable_path }}" 
+            dest: "{{ wpcli_executable_path }}"
             remote_src: true
             owner: root
             group: root
