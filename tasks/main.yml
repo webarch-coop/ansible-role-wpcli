@@ -18,14 +18,14 @@
         group: root
         mode: 0755
 
-    - name: Check if WP-CLI is installed
+    - name: Run which to check if WP-CLI is installed
       ansible.builtin.command: which wp
       check_mode: false
       changed_when: false
       register: wpcli_path
       failed_when: wpcli_path.rc is not regex('0|1')
 
-    - name: Check the installed and latest version of WP-CLI
+    - name: Check the installed version of WP-CLI
       block:
 
         - name: Check what version of WP-CLI is installed
@@ -58,7 +58,6 @@
       ansible.builtin.debug:
         msg:
           - "Location: {{ wpcli_headers.location }}"
-          - "Path: {{ wpcli_headers.location | urlsplit('path') }}"
           - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
         verbosity: 2
 
