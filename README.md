@@ -8,10 +8,10 @@ This repository contains an Ansible role for installing and upgrading
 This role:
 
 * Installs or upgrades WP-CLI, an upgrade is done only if the installed version is older than the latest version.
-* Installs completion for the Bash shell for WP-CLI.
 * Checks the latest version of WP-CLI available on GitHub.
 * Checks the GPG signature of WP-CLI after downloding it.
 * Checks that WP-CLI works before installing it.
+* Installs completion for the Bash shell for WP-CLI.
 
 There are two [default variables](defaults/main.yml):
 
