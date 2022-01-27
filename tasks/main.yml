@@ -111,7 +111,7 @@
             owner: root
             group: root
             mode: 0755
-            validate: php %s --info 
+            validate: php %s --info
 
         - name: WP-CLI Bash completion installed
           ansible.builtin.get_url:
