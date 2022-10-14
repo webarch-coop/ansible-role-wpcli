@@ -13,12 +13,15 @@ This role:
 * Checks that WP-CLI works before installing it.
 * Installs completion for the Bash shell for WP-CLI.
 
-There are two [default variables](defaults/main.yml):
+There are five [default variables](defaults/main.yml), these should only need changing if this role isn't run as `root` and you wish to install WP_CLI into a users `~/hom/bin`, `the wpcli_bash_completion_dir`, `wpcli_bin` and `wpcli_download_dir` directories need to be writable by the `wpcli_owner`:
 
-| Variable name        | Default value    | Comment                                            |
-|----------------------|------------------|----------------------------------------------------|
-| `wpcli_bin`          | `/usr/local/bin` | The directory into which WP-CLI will be installed. |
-| `wpcli_download_dir` | `/root`          | The directory used for downloading files.          |
+| Variable name               | Default value            | Comment                                                         |
+|-----------------------------|--------------------------|-----------------------------------------------------------------|
+| `wpcli_bash_completion_dir` | `/etc/bash_completion.d` | The directory into which the Bash completion will be installed. |
+| `wpcli_bin`                 | `/usr/local/bin`         | The directory into which WP-CLI will be installed.              |
+| `wpcli_download_dir`        | `/root`                  | The directory used for downloading files.                       |
+| `wpcli_owner`               | `root`                   | The owner of the WP-CLI files.                                  |
+| `wpcli_group`               | `"{{ wpcli_owner }}"`    | The group for the WP-CLI files.                                 |
 
 
 The primary URL of this repo is [`https://git.coop/webarch/wpcli`](https://git.coop/webarch/wpcli) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-wpcli) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/wpcli).

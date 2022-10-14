@@ -1,7 +1,9 @@
 ---
 # https://docs.ansible.com/ansible-lint/rules/default_rules.html
+warn_list:
+  - experimental
 skip_list:
-  # Lines should be no longer than 160 chars
-  - "204"
+  - key-order[task]
+  - schema[meta]
 # vim: syntax=yaml
 ...

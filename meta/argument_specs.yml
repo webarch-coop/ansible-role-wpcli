@@ -1,0 +1,28 @@
+---
+argument_specs:
+  main:
+    author: Chris Croome
+    description: Ansible role to install WP-CLI on Debian and Ubuntu.
+    short_description: The main entry point for the WP-CLI role.
+    options:
+      wpcli_bash_completion_dir:
+        type: str
+        required: true
+        description: The directory into which the Bash completion will be installed.
+      wpcli_bin:
+        type: str
+        required: true
+        description: The directory into which WP-CLI will be installed.
+      wpcli_download_dir:
+        type: str
+        required: true
+        description: The directory used for downloading files.
+      wpcli_group:
+        type: str
+        required: true
+        description: The group for the WP-CLI files.
+      wpcli_owner:
+        type: str
+        required: true
+        description: The owner of the WP-CLI files.
+...
