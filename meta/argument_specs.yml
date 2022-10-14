@@ -5,6 +5,10 @@ argument_specs:
     description: Ansible role to install WP-CLI on Debian and Ubuntu.
     short_description: The main entry point for the WP-CLI role.
     options:
+      wpcli:
+        type: bool
+        required: true
+        description: Run the tasks in this role
       wpcli_bash_completion_dir:
         type: str
         required: true

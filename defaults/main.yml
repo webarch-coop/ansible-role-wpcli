@@ -1,4 +1,5 @@
 ---
+wpcli: true
 wpcli_bash_completion_dir: /etc/bash_completion.d
 wpcli_bin: /usr/local/bin
 wpcli_download_dir: /root

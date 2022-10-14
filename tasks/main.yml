@@ -138,6 +138,7 @@
 
       when: (wpcli_which.rc == 1) or (wpcli_installed is version(wpcli_latest, '<'))
 
+  when: wpcli | bool
   tags:
     - wpcli
 ...

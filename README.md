@@ -13,10 +13,11 @@ This role:
 * Checks that WP-CLI works before installing it.
 * Installs completion for the Bash shell for WP-CLI.
 
-There are five [default variables](defaults/main.yml), these should only need changing if this role isn't run as `root` and you wish to install WP_CLI into a users `~/hom/bin`, `the wpcli_bash_completion_dir`, `wpcli_bin` and `wpcli_download_dir` directories need to be writable by the `wpcli_owner`:
+There are six [default variables](defaults/main.yml), these should only need changing if this role isn't run as `root` and you wish to install WP-CLI into a users `~/hom/bin`, `the wpcli_bash_completion_dir`, `wpcli_bin` and `wpcli_download_dir` directories need to be writable by the `wpcli_owner`:
 
 | Variable name               | Default value            | Comment                                                         |
 |-----------------------------|--------------------------|-----------------------------------------------------------------|
+| `wpcli`                     | `true`                   | Run the tasks in this role.                                     |
 | `wpcli_bash_completion_dir` | `/etc/bash_completion.d` | The directory into which the Bash completion will be installed. |
 | `wpcli_bin`                 | `/usr/local/bin`         | The directory into which WP-CLI will be installed.              |
 | `wpcli_download_dir`        | `/root`                  | The directory used for downloading files.                       |
