@@ -32,7 +32,7 @@
 
         - name: Set a fact for the installed version of WP-CLI
           ansible.builtin.set_fact:
-            wpcli_installed: "{{ wpcli_version_check.stdout | regex_replace('^WP-CLI ') }}"
+            wpcli_installed: "{{ wpcli_version_check.stdout_lines | last | regex_replace('^WP-CLI ') | string }}"
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
@@ -54,12 +54,18 @@
       ansible.builtin.debug:
         msg:
           - "Location: {{ wpcli_headers.location }}"
-          - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
+          - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
         verbosity: 2
 
     - name: Set a fact for the latest version of WP-CLI
       ansible.builtin.set_fact:
-        wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') }}"
+        wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
+
+    - name: Debug the installed and latest version of WP-CLI
+      ansible.builtin.debug:
+        msg:
+          - "wpcli_installed is a {{ wpcli_installed | type_debug }} variable with the value {{ wpcli_installed }}"
+          - "wpcli_latest is a {{ wpcli_latest | type_debug }} variable with the value {{ wpcli_latest }}"
 
     - name: Install or upgrade WP-CLI
       block:
