@@ -32,7 +32,7 @@
 
         - name: Set a fact for the installed version of WP-CLI
           ansible.builtin.set_fact:
-            wpcli_installed: "{{ wpcli_version_check.stdout_lines | last | regex_replace('^WP-CLI ') | string }}"
+            wpcli_installed: "{{ wpcli_version_check.stdout_lines | last | regex_replace('^WP-CLI ') | trim | string }}"
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
