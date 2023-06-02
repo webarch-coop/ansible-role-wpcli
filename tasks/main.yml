@@ -1,14 +1,47 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects WP-CLI Ansible role.
+#
+# The Webarchitects WP-CLI Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects WP-CLI Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Install or upgrade WP-CLI
   block:
 
-    - name: PHP CLI, GPG and programmable completion for the Bash shell present
+    - name: Include WP-CLI verify variables tasks
+      ansible.builtin.include_tasks: verify.yml
+      when: wpcli_verify | bool
+
+    - name: Packages present when root
       ansible.builtin.apt:
-        pkg:
-          - bash-completion
-          - gnupg
-          - php-cli
+        pkg: "{{ wpcli_pkgs_present }}"
         state: present
+      when: ansible_effective_user_id == 0
+
+    - name: Check packages when not root
+      block:
+
+        - name: Read package facts
+          ansible.builtin.package_facts:
+            manager: apt
+
+        - name: Check the presence of the required packages
+          ansible.builtin.assert:
+            that:
+              - wpcli_pkg in ansible_facts.packages.keys()
+            fail_msg:
+              - "The {{ wpcli_pkg }} is required"
+              - "You can install all the requirements using:"
+              - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+          loop: "{{ wpcli_pkgs_present }}"
+          loop_control:
+            loop_var: wpcli_pkg
+
+      when: ansible_effective_user_id != 0
 
     - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command: "which wp"
@@ -61,33 +94,19 @@
       ansible.builtin.set_fact:
         wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
 
-    - name: Debug the installed and latest version of WP-CLI
+    - name: Set a fact for the required version of WP-CLI
+      ansible.builtin.set_fact:
+        wpcli_required: "{% if wpcli_version == 'latest' %}{{ wpcli_latest }}{% else %}{{ wpcli_version }}{% endif %}"
+
+    - name: Debug the installed, latest and required version of WP-CLI
       ansible.builtin.debug:
         msg:
           - "wpcli_installed is a {{ wpcli_installed | type_debug }} variable with the value {{ wpcli_installed }}"
           - "wpcli_latest is a {{ wpcli_latest | type_debug }} variable with the value {{ wpcli_latest }}"
+          - "wpcli_required is a {{ wpcli_required | type_debug }} variable with the value {{ wpcli_required }}"
 
-    - name: Install or upgrade WP-CLI
+    - name: Install or downgrade / upgrade WP-CLI
       block:
-
-        - name: WP-CLI GPG public key present
-          ansible.builtin.copy:
-            src: A3A2E8F226F0BC06.asc
-            dest: "{{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
-            mode: 0600
-
-        - name: WP-CLI GPG public key imported
-          ansible.builtin.command: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
-          register: wpcli_gpg_import
-          changed_when: ("not changed" not in wpcli_gpg_import.stderr)
-
-        - name: WP-CLI GPG signature present
-          ansible.builtin.get_url:
-            url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
-            dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc"
-            owner: "{{ wpcli_owner }}"
-            group: "{{ wpcli_group }}"
-            mode: 0600
 
         - name: WP-CLI present
           ansible.builtin.get_url:
@@ -95,17 +114,52 @@
             dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
-            mode: 0600
-
-        - name: WP-CLI GPG signature verified
-          ansible.builtin.command: >
-            gpg --no-tty --verify --logger-fd 1
-            {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc
-            {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar
+            mode: "0600"
           check_mode: false
           changed_when: false
-          register: wpcli_gpg_verify
-          failed_when: ("Good signature from" not in wpcli_gpg_verify.stdout)
+
+        - name: Check GPG signature
+          block:
+
+            - name: Set a fact for the GPG file required
+              ansible.builtin.set_fact:
+                wpcli_gpg_key: "{{ wpcli_gpg_keys | community.general.json_query(wpcli_gpg_jpq) }}"
+              vars:
+                wpcli_gpg_jpq: "[?ver=='{{ wpcli_required }}'].id|[0]"
+
+            - name: WP-CLI GPG public key present
+              ansible.builtin.copy:
+                src: A3A2E8F226F0BC06.asc
+                dest: "{{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
+                mode: "0600"
+
+            - name: WP-CLI GPG public key imported
+              ansible.builtin.command: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
+              check_mode: false
+              register: wpcli_gpg_import
+              changed_when: ("not changed" not in wpcli_gpg_import.stderr)
+
+            - name: WP-CLI GPG signature present
+              ansible.builtin.get_url:
+                url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
+                dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc"
+                owner: "{{ wpcli_owner }}"
+                group: "{{ wpcli_group }}"
+                mode: "0600"
+              check_mode: false
+              changed_when: false
+
+            - name: WP-CLI GPG signature verified
+              ansible.builtin.command: >
+                gpg --no-tty --verify --logger-fd 1
+                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc
+                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar
+              check_mode: false
+              changed_when: false
+              register: wpcli_gpg_verify
+              failed_when: ("Good signature from" not in wpcli_gpg_verify.stdout)
+
+          when: wpcli_gpg_verify | bool
 
         - name: WP-CLI in place
           ansible.builtin.copy:
@@ -114,16 +168,16 @@
             remote_src: true
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
-            mode: 0755
+            mode: "0755"
             validate: php %s --info
 
-        - name: Directory /etc/bash_completion.d present
+        - name: Bash completion directory present
           ansible.builtin.file:
-            path: /etc/bash_completion.d
+            path: "{{ wpcli_bash_completion_dir }}"
             state: directory
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
-            mode: 0755
+            mode: "0755"
 
         - name: WP-CLI Bash completion present
           ansible.builtin.get_url:
@@ -131,18 +185,20 @@
             dest: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
-            mode: 0600
+            mode: "0600"
+          check_mode: false
+          changed_when: false
 
         - name: WP-CLI Bash completion in place
           ansible.builtin.copy:
             src: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
-            dest: /etc/bash_completion.d/wp-completion.bash
+            dest: "{{ wpcli_bash_completion_dir }}/wp-completion.bash"
             remote_src: true
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
-            mode: 0644
+            mode: "0644"
 
-      when: (wpcli_which.rc == 1) or (wpcli_installed is version(wpcli_latest, '<'))
+      when: ( wpcli_which.rc == 1 ) or ( wpcli_installed is version(wpcli_required, 'ne') )
 
   when: wpcli | bool
   tags:

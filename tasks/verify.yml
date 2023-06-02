@@ -8,17 +8,25 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-image: registry.git.coop/webarch/containers/images/ansible:0.23.0
-variables:
-  PY_COLORS: "1"
-  ANSIBLE_FORCE_COLOR: "1"
-before_script:
-  - chmod 700 $(pwd)
-stages:
-  - lint
-lint:
-  stage: lint
-  script:
-    - molecule lint
-# vim: syntax=yaml
+- name: Verify WP-CLI variables
+  block:
+
+    - name: Debug the hostvars variable names that start with wpcli_
+      ansible.builtin.debug:
+        var: wpclivarnames
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Debug the hostvars variable names that start with wpcli_
+      ansible.builtin.debug:
+        var: wpclihostvars
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Check wpcli_ variables using meta/argument_specs.yml
+      ansible.builtin.validate_argument_spec:
+        argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
+        provided_arguments: "{{ wpclihostvars }}"
+
+  when: wpcli_verify | bool
+  tags:
+    - wpcli
 ...

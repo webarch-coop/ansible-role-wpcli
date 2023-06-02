@@ -1,0 +1,62 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects WP-CLI Ansible role.
+#
+# The Webarchitects WP-CLI Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects WP-CLI Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+# https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
+wpclivarnames: "{{ q('varnames', '^wpcli_') | sort }}"
+wpclihostvars: "{{ dict(wpclivarnames | list | zip(q('vars', *wpclivarnames))) }}"
+
+# https://github.com/wp-cli/builds/blob/gh-pages/README.md
+# https://github.com/wp-cli/wp-cli/issues/5643
+wpcli_gpg_keys:
+  - id: 012B5FF55FFADC1A52C04C03C2188A5B63449075
+    ver: 2.8.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.7.1
+  - id: A3A2E8F226F0BC06
+    ver: 2.6.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.5.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.4.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.3.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.2.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.1.0
+  - id: A3A2E8F226F0BC06
+    ver: 2.0.1
+  - id: A3A2E8F226F0BC06
+    ver: 2.0.0
+  - id: A3A2E8F226F0BC06
+    ver: 1.5.1
+  - id: 673A02042F6B6B7F
+    ver: 1.5.0
+  - id: 673A02042F6B6B7F
+    ver: 1.4.1
+  - id: 673A02042F6B6B7F
+    ver: 1.4.0
+  - id: 673A02042F6B6B7F
+    ver: 1.3.0
+  - id: 673A02042F6B6B7F
+    ver: 1.2.1
+  - id: 673A02042F6B6B7F
+    ver: 1.2.0
+  - id: 673A02042F6B6B7F
+    ver: 1.1.0
+  - id: 673A02042F6B6B7F
+    ver: 1.0.0
+  - id: 673A02042F6B6B7F
+    ver: 0.25.0
+  - id: 673A02042F6B6B7F
+    ver: 0.24.1
+  - id: 673A02042F6B6B7F
+    ver: 0.24.0
+...

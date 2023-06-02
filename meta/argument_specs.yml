@@ -1,3 +1,12 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects WP-CLI Ansible role.
+#
+# The Webarchitects WP-CLI Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects WP-CLI Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 argument_specs:
   main:
@@ -21,6 +30,24 @@ argument_specs:
         type: str
         required: true
         description: The directory used for downloading files.
+      wpcli_gpg_keys:
+        type: list
+        elements: dict
+        required: true
+        description: An internal list of WP-CLI versions and the GPG key ID used to sign the release.
+        options:
+          id:
+            type: str
+            required: true
+            description: A GPG ID corresponding to a file name for the GPG public key.
+          ver:
+            type: str
+            required: true
+            description: A WP-CLI version number.
+      wpcli_gpg_verify:
+        type: bool
+        required: true
+        description: Use GPG to verify WP-CLI.
       wpcli_group:
         type: str
         required: true
@@ -29,4 +56,17 @@ argument_specs:
         type: str
         required: true
         description: The owner of the WP-CLI files.
+      wpcli_pkgs_present:
+        type: list
+        elements: str
+        required: true
+        description: A list of .deb packages that this role requires.
+      wpcli_verify:
+        type: bool
+        required: true
+        description: Verify variables that start with wpcli_ using the argument specification.
+      wpcli_version:
+        type: str
+        required: true
+        description: A version number for WP-CLI or latest for the latest version.
 ...
