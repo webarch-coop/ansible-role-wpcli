@@ -8,10 +8,12 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-image: registry.git.coop/webarch/containers/images/ansible:0.23.0
+image: registry.git.coop/webarch/containers/images/ansible:0.24.0
 variables:
-  PY_COLORS: "1"
+  ANSIBLE_DEFAULT_VERBOSITY: "2"
+  ANSIBLE_DIFF_ALWAYS: "1"
   ANSIBLE_FORCE_COLOR: "1"
+  PY_COLORS: "1"
 before_script:
   - chmod 700 $(pwd)
 stages:
@@ -19,6 +21,6 @@ stages:
 lint:
   stage: lint
   script:
-    - molecule lint
+    - molecule converge
 # vim: syntax=yaml
 ...
