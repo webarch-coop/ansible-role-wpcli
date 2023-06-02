@@ -8,6 +8,13 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+- name: Skip the tasks inthis role as wpcli is false
+  ansible.builtin.debug:
+    msg: "The wpcli variables need to to true for the tasks in this role to run."
+  when: not wpcli | bool
+  tags:
+    - wpcli
+
 - name: Install or upgrade WP-CLI
   block:
 

@@ -17,7 +17,7 @@ There are ten [default variables](defaults/main.yml), these should only need cha
 
 | Variable name               | Default value                      | Comment                                                         |
 |-----------------------------|------------------------------------|-----------------------------------------------------------------|
-| `wpcli`                     | `true`                             | Run the tasks in this role.                                     |
+| `wpcli`                     | `false`                            | Run the tasks in this role.                                     |
 | `wpcli_bash_completion_dir` | `/etc/bash_completion.d`           | The directory into which the Bash completion will be installed. |
 | `wpcli_bin`                 | `/usr/local/bin`                   | The directory into which WP-CLI will be installed.              |
 | `wpcli_download_dir`        | `/root`                            | The directory used for downloading files.                       |
