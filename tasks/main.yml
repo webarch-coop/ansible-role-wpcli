@@ -10,7 +10,7 @@
 ---
 - name: Skip the tasks inthis role as wpcli is false
   ansible.builtin.debug:
-    msg: "The wpcli variables need to to true for the tasks in this role to run."
+    msg: "The wpcli variable need to be true for the tasks in this role to run."
   when: not wpcli | bool
   tags:
     - wpcli
