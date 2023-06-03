@@ -117,8 +117,8 @@
 
         - name: WP-CLI present
           ansible.builtin.get_url:
-            url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar"
-            dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
+            url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_required }}/wp-cli-{{ wpcli_required }}.phar"
+            dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar"
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
             mode: "0600"
@@ -148,8 +148,8 @@
 
             - name: WP-CLI GPG signature present
               ansible.builtin.get_url:
-                url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_latest }}/wp-cli-{{ wpcli_latest }}.phar.asc"
-                dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc"
+                url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_required }}/wp-cli-{{ wpcli_required }}.phar.asc"
+                dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar.asc"
                 owner: "{{ wpcli_owner }}"
                 group: "{{ wpcli_group }}"
                 mode: "0600"
@@ -159,8 +159,8 @@
             - name: WP-CLI GPG signature verified
               ansible.builtin.command: >
                 gpg --no-tty --verify --logger-fd 1
-                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar.asc
-                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar
+                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar.asc
+                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar
               check_mode: false
               changed_when: false
               register: wpcli_gpg_verify
@@ -170,7 +170,7 @@
 
         - name: WP-CLI in place
           ansible.builtin.copy:
-            src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_latest }}.phar"
+            src: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar"
             dest: "{{ wpcli_path }}"
             remote_src: true
             owner: "{{ wpcli_owner }}"
@@ -188,8 +188,8 @@
 
         - name: WP-CLI Bash completion present
           ansible.builtin.get_url:
-            url: "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_latest }}/utils/wp-completion.bash"
-            dest: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
+            url: "https://raw.githubusercontent.com/wp-cli/wp-cli/v{{ wpcli_required }}/utils/wp-completion.bash"
+            dest: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_required }}.bash"
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
             mode: "0600"
@@ -198,7 +198,7 @@
 
         - name: WP-CLI Bash completion in place
           ansible.builtin.copy:
-            src: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_latest }}.bash"
+            src: "{{ wpcli_download_dir }}/wp-completion.{{ wpcli_required }}.bash"
             dest: "{{ wpcli_bash_completion_dir }}/wp-completion.bash"
             remote_src: true
             owner: "{{ wpcli_owner }}"
