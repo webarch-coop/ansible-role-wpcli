@@ -37,6 +37,14 @@
       ansible.builtin.debug:
         var: ansible_effective_user_id
 
+    - name: Debug ansible_user_id
+      ansible.builtin.debug:
+        var: ansible_user_id
+
+    - name: Debug ansible_user_dir
+      ansible.builtin.debug:
+        var: ansible_user_dir
+
     - name: Include wpcli role as user
       ansible.builtin.include_role:
         name: wpcli
@@ -58,6 +66,14 @@
     - name: Debug ansible_effective_user_id
       ansible.builtin.debug:
         var: ansible_effective_user_id
+
+    - name: Debug ansible_user_id
+      ansible.builtin.debug:
+        var: ansible_user_id
+
+    - name: Debug ansible_user_dir
+      ansible.builtin.debug:
+        var: ansible_user_dir
 
     - name: Required packages absent
       ansible.builtin.apt:
