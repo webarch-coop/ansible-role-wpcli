@@ -169,8 +169,8 @@
                 {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar
               check_mode: false
               changed_when: false
-              register: wpcli_gpg_verify
-              failed_when: ("Good signature from" not in wpcli_gpg_verify.stdout)
+              register: wpcli_gpg_verify_sig
+              failed_when: ( "Good signature from" not in wpcli_gpg_verify_sig.stdout )
 
           when: wpcli_gpg_verify | bool
 
