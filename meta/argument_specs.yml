@@ -34,10 +34,10 @@ argument_specs:
         type: dict
         required: false
         description: An internl variable for the gpg import key results.
-#      wpcli_gpg_key:
-#        type: str
-#        required: false
-#        description: An internal variable for the GPG key ID.
+      wpcli_gpg_key:
+        type: str
+        required: false
+        description: An internal variable for the GPG key ID.
       wpcli_gpg_keys:
         type: list
         elements: dict
@@ -56,22 +56,26 @@ argument_specs:
         type: bool
         required: true
         description: Use GPG to verify WP-CLI.
-#      wpcli_gpg_verify_sig:
-#        type: dict
-#        required: false
-#        description: An internal variable for the results of verifying the GPG signature.
+      wpcli_gpg_verify_sig:
+        type: dict
+        required: false
+        description: An internal variable for the results of verifying the GPG signature.
       wpcli_group:
         type: str
         required: true
         description: The group for the WP-CLI files.
-#      wpcli_headers:
-#        type: dict
-#        required: false
-#        description: An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub.
-#      wpcli_latest:
-#        type: str
-#        required: false
-#        description: An internal variable for the latest version of WP-CLI.
+      wpcli_headers:
+        type: dict
+        required: false
+        description: An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub.
+      wpcli_latest:
+        type: str
+        required: false
+        description: An internal variable for the installed version of WP-CLI.
+      wpcli_latest:
+        type: str
+        required: false
+        description: An internal variable for the latest version of WP-CLI.
       wpcli_name:
         type: str
         required: true
@@ -84,6 +88,14 @@ argument_specs:
         type: str
         required: true
         description: An internal variable for the full path to the WP-CLI executable.
+      wpcli_path_default:
+        type: str
+        required: true
+        description: An internal variable for the full path to the default WP-CLI executable.
+      wpcli_latest:
+        type: str
+        required: false
+        description: An internal variable for the required version of WP-CLI.
       wpcli_pkgs_present:
         type: list
         elements: str
@@ -97,4 +109,12 @@ argument_specs:
         type: str
         required: true
         description: A version number for WP-CLI or latest for the latest version.
+      wpcli_version_check:
+        type: dict
+        required: false
+        description: An internal variable for the results of checking the installed version of WP-CLI.
+      wpcli_which:
+        type: dict
+        required: false
+        description: An internal variable for the results of running which to get the WP-CLI path.
 ...

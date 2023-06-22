@@ -38,7 +38,7 @@
       ansible.builtin.debug:
         var: ansible_effective_user_id
 
-    - name: Include wpcli roles as user
+    - name: Include wpcli role as user
       ansible.builtin.include_role:
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]
