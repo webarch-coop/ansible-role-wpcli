@@ -5,13 +5,6 @@
 This repository contains an Ansible role for installing and upgrading
 [WP-CLI](https://wp-cli.org/) on Debian and Ubuntu servers.
 
-When run this role:
-
-* Checks the latest version of WP-CLI available on GitHub.
-* Checks the GPG signature of WP-CLI after downloading it.
-* Checks that WP-CLI works before installing it.
-* Installs completion for the Bash shell for WP-CLI.
-
 ## Role Variables
 
 There are eleven [default variables](defaults/main.yml), set `wpcli` to `true`
@@ -67,10 +60,10 @@ This role can also be used with the [localhost
 repo](https://git.coop/webarch/localhost) to install WP-CLI locally, see also
 the [WordPress role](https://git.coop/webarch/wordpress).
 
-Include this role and run itr as `root`:
+Include this role and run it as `root`:
 
 ```yaml
-- name: Include wplic role as root
+- name: Include wpcli role as root
   ansible.builtin.include_role:
     name: wpcli
   vars:
@@ -85,10 +78,10 @@ Include this role and run it as a non-root user:
     name: wpcli
   vars:
     wpcli: true
-    wpcli_owner: ""
-    wpcli_bin: "/.local/bin"
+    wpcli_owner: "&lcub;&lcub; ansible_user_id &rcub;&rcub;"
+    wpcli_bin: "&lcub;&lcub; ansible_user_dir &rcub;&rcub;/.local/bin"
     wpcli_download_dir: /tmp
-    wpcli_bash_completion_dir: ".bash_completion.d"
+    wpcli_bash_completion_dir: "&lcub;&lcub; ansible_user_dir &rcub;&rcub;.bash_completion.d"
 ```
 
 ## Repository
