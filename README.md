@@ -73,15 +73,15 @@ Include this role and run it as `root`:
 Include this role and run it as a non-root user:
 
 ```yaml
-- name: Include wpcli role as non-root user
+- name: Include wpcli role as the foo user
   ansible.builtin.include_role:
     name: wpcli
   vars:
     wpcli: true
-    wpcli_owner: "&lcub;&lcub; ansible_user_id &rcub;&rcub;"
-    wpcli_bin: "&lcub;&lcub; ansible_user_dir &rcub;&rcub;/.local/bin"
-    wpcli_download_dir: /tmp
-    wpcli_bash_completion_dir: "&lcub;&lcub; ansible_user_dir &rcub;&rcub;.bash_completion.d"
+    wpcli_owner: "foo"
+    wpcli_bin: "/home/foo/.local/bin"
+    wpcli_download_dir: "/home/foo/tmp"
+    wpcli_bash_completion_dir: "/home/foo/.bash_completion.d"
 ```
 
 ## Repository
