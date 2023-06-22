@@ -21,14 +21,9 @@ galaxy_info:
       versions:
         - bookworm
         - bullseye
-        - buster
-        - stretch
     - name: Ubuntu
       versions:
         - jammy
-        - focal
-        - bionic
-        - xenial
   galaxy_tags:
     - debian
     - ubuntu

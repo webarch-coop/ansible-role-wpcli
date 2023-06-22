@@ -30,6 +30,14 @@ argument_specs:
         type: str
         required: true
         description: The directory used for downloading files.
+      wpcli_gpg_import:
+        type: dict
+        required: false
+        description: An internl variable for the gpg import key results.
+#      wpcli_gpg_key:
+#        type: str
+#        required: false
+#        description: An internal variable for the GPG key ID.
       wpcli_gpg_keys:
         type: list
         elements: dict
@@ -48,14 +56,34 @@ argument_specs:
         type: bool
         required: true
         description: Use GPG to verify WP-CLI.
+#      wpcli_gpg_verify_sig:
+#        type: dict
+#        required: false
+#        description: An internal variable for the results of verifying the GPG signature.
       wpcli_group:
         type: str
         required: true
         description: The group for the WP-CLI files.
+#      wpcli_headers:
+#        type: dict
+#        required: false
+#        description: An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub.
+#      wpcli_latest:
+#        type: str
+#        required: false
+#        description: An internal variable for the latest version of WP-CLI.
+      wpcli_name:
+        type: str
+        required: true
+        description: The file name of the WP-CLI executable.
       wpcli_owner:
         type: str
         required: true
         description: The owner of the WP-CLI files.
+      wpcli_path:
+        type: str
+        required: true
+        description: An internal variable for the full path to the WP-CLI executable.
       wpcli_pkgs_present:
         type: list
         elements: str

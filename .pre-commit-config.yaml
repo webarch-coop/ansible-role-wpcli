@@ -27,9 +27,10 @@ repos:
           - jc==1.23.2
           # https://github.com/jmespath/jmespath.py/tags
           - jmespath==1.0.1
-    # https://github.com/jackdewinter/pymarkdown/releases
-    - repo: https://github.com/jackdewinter/pymarkdown
-      rev: main
-      hooks:
-          - id: pymarkdown
+  # https://github.com/jackdewinter/pymarkdown/releases
+  - repo: https://github.com/jackdewinter/pymarkdown
+    rev: main
+    hooks:
+      - id: pymarkdown
+        name: Markdown Lint
 ...

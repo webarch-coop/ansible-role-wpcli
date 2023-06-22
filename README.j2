@@ -23,7 +23,9 @@ This role:
 There are ten [default variables](defaults/main.yml), these should only need
 changing if this role isn't run as `root` and you wish to install WP-CLI into a
 users `~/bin`, `the wpcli_bash_completion_dir`, `wpcli_bin` and
-`wpcli_download_dir` directories need to be writable by the `wpcli_owner`:
+`wpcli_download_dir` directories need to be writable by the `wpcli_owner`.
+
+All the variables, including internal ones are documented below:
 
 {% for entrypoint in argument_specs.keys() %}
 {%- set path, options=entrypoint_options[entrypoint][0] -%}

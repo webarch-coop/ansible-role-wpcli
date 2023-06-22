@@ -23,7 +23,9 @@ This role:
 There are ten [default variables](defaults/main.yml), these should only need
 changing if this role isn't run as `root` and you wish to install WP-CLI into a
 users `~/bin`, `the wpcli_bash_completion_dir`, `wpcli_bin` and
-`wpcli_download_dir` directories need to be writable by the `wpcli_owner`:
+`wpcli_download_dir` directories need to be writable by the `wpcli_owner`.
+
+All the variables, including internal ones are documented below:
 
 ### Entrypoint: main
 
@@ -35,10 +37,13 @@ The main entry point for the WP-CLI role.
 | wpcli_bash_completion_dir | The directory into which the Bash completion will be installed. | str | yes |  |
 | wpcli_bin | The directory into which WP-CLI will be installed. | str | yes |  |
 | wpcli_download_dir | The directory used for downloading files. | str | yes |  |
+| wpcli_gpg_import | An internl variable for the gpg import key results. | dict | no |  |
 | wpcli_gpg_keys | An internal list of WP-CLI versions and the GPG key ID used to sign the release. | list of dicts of 'wpcli_gpg_keys' options | yes |  |
 | wpcli_gpg_verify | Use GPG to verify WP-CLI. | bool | yes | false |
 | wpcli_group | The group for the WP-CLI files. | str | yes |  |
+| wpcli_name | The file name of the WP-CLI executable. | str | yes |  |
 | wpcli_owner | The owner of the WP-CLI files. | str | yes |  |
+| wpcli_path | An internal variable for the full path to the WP-CLI executable. | str | yes |  |
 | wpcli_pkgs_present | A list of .deb packages that this role requires. | list of 'str' | yes |  |
 | wpcli_verify | Verify variables that start with wpcli_ using the argument specification. | bool | yes | false |
 | wpcli_version | A version number for WP-CLI or latest for the latest version. | str | yes |  |
@@ -52,7 +57,7 @@ The main entry point for the WP-CLI role.
 
 
 
-The GPG public key in the files directory was copied from [this blog
+The GPG public keys in the files directory were copied from [this blog
 post](https://make.wordpress.org/cli/2018/05/31/gpg-signature-change/).
 
 The primary URL of this repo is
