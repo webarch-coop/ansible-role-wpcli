@@ -25,6 +25,7 @@
     - name: Packages present when root
       ansible.builtin.apt:
         pkg: "{{ wpcli_pkgs_present }}"
+        update-cache: true
         state: present
       when: ansible_effective_user_id == 0
 
