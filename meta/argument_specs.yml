@@ -68,7 +68,7 @@ argument_specs:
         type: dict
         required: false
         description: An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub.
-      wpcli_latest:
+      wpcli_installed:
         type: str
         required: false
         description: An internal variable for the installed version of WP-CLI.
@@ -92,7 +92,7 @@ argument_specs:
         type: str
         required: false
         description: An internal variable for the full path to the default WP-CLI executable.
-      wpcli_latest:
+      wpcli_required:
         type: str
         required: false
         description: An internal variable for the required version of WP-CLI.
