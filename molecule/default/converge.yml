@@ -8,33 +8,45 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Lint
-  become: false
+- name: Run as root
+  become: true
   connection: local
-  gather_facts: false
+  gather_facts: true
   hosts:
     - localhost
   tasks:
 
-    - name: Check Jinja2 syntax
-      ansible.builtin.command: find -type f -name '*.j2' -exec ansiblej2lint.py {} +
-      check_mode: false
-      args:
-        chdir: ../..
-      changed_when: false
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
 
-    - name: YAML lint
-      ansible.builtin.command: yamllint -f colored -c .yamllint .
-      check_mode: false
-      args:
-        chdir: ../..
-      changed_when: false
+    - name: Include wplic role as root
+      ansible.builtin.include_role:
+        name: wpcli
+      vars:  # noqa var-naming[no-role-prefix]
+        wpcli: true
 
-    - name: Ansible lint
-      ansible.builtin.command: ansible-lint -c .ansible-lint --force-color .
-      check_mode: false
-      args:
-        chdir: ../..
-      changed_when: false
+- name: Run as user
+  become: false
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
+
+    - name: Include wpcli roles as user
+      ansible.builtin.include_role:
+        name: wpcli
+      vars:  # noqa var-naming[no-role-prefix]
+        wpcli: true
+        wpcli_owner: "{{ ansible_user }}"
+        wpcli_bin: "{{ ansible_env.HOME }}/.local/bin"
+        wpcli_download_dir: /tmp
+        wpcli_bash_completion_dir: "{{ ansible_env.HOME }}.bash_completion.d"
+
 # vim: syntax=yaml
 ...

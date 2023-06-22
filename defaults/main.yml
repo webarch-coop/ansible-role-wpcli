@@ -20,5 +20,5 @@ wpcli_pkgs_present:
   - gnupg
   - php-cli
 wpcli_verify: true
-wpcli_version: 2.7.1
+wpcli_version: latest
 ...
