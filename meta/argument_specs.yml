@@ -90,7 +90,7 @@ argument_specs:
         description: An internal variable for the full path to the WP-CLI executable.
       wpcli_path_default:
         type: str
-        required: true
+        required: false
         description: An internal variable for the full path to the default WP-CLI executable.
       wpcli_latest:
         type: str
