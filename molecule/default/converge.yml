@@ -43,10 +43,10 @@
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]
         wpcli: true
-        wpcli_owner: "{{ ansible_user }}"
-        wpcli_bin: "{{ ansible_env.HOME }}/.local/bin"
+        wpcli_owner: "{{ ansible_user_id }}"
+        wpcli_bin: "{{ ansible_user_dir }}/.local/bin"
         wpcli_download_dir: /tmp
-        wpcli_bash_completion_dir: "{{ ansible_env.HOME }}.bash_completion.d"
+        wpcli_bash_completion_dir: "{{ ansible_user_dir }}.bash_completion.d"
 
 # vim: syntax=yaml
 ...
