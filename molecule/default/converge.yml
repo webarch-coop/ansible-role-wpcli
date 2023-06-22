@@ -8,6 +8,23 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+- name: Install requirements as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Required packages present
+      ansible.builtin.apt:
+        pkg:
+          - bash-completion
+          - gnupg
+          - php-cli
+        update-cache: true
+        state: present
+
 - name: Run as user
   become: false
   connection: local
@@ -19,12 +36,6 @@
     - name: Debug ansible_effective_user_id
       ansible.builtin.debug:
         var: ansible_effective_user_id
-
-#    - name: Delete the root installed version of WP-CLI
-#      ansible.builtin.file:
-#        path: /usr/local/bin/wp
-#        state: absent
-#      become: true
 
     - name: Include wpcli role as user
       ansible.builtin.include_role:
@@ -47,6 +58,15 @@
     - name: Debug ansible_effective_user_id
       ansible.builtin.debug:
         var: ansible_effective_user_id
+
+    - name: Required packages absent
+      ansible.builtin.apt:
+        pkg:
+          - bash-completion
+          - gnupg
+          - php-cli
+        update-cache: true
+        state: absent
 
     - name: Include wplic role as root
       ansible.builtin.include_role:
