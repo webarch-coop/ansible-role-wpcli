@@ -40,11 +40,13 @@ The main entry point for the WP-CLI role.
 | wpcli_gpg_verify_sig | An internal variable for the results of verifying the GPG signature. | dict | no |  |
 | wpcli_group | The group for the WP-CLI files. | str | yes |  |
 | wpcli_headers | An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub. | dict | no |  |
-| wpcli_latest | An internal variable for the required version of WP-CLI. | str | no |  |
+| wpcli_installed | An internal variable for the installed version of WP-CLI. | str | no |  |
+| wpcli_latest | An internal variable for the latest version of WP-CLI. | str | no |  |
 | wpcli_name | The file name of the WP-CLI executable. | str | yes |  |
 | wpcli_owner | The owner of the WP-CLI files. | str | yes |  |
 | wpcli_path | An internal variable for the full path to the WP-CLI executable. | str | yes |  |
-| wpcli_path_default | An internal variable for the full path to the default WP-CLI executable. | str | yes |  |
+| wpcli_path_default | An internal variable for the full path to the default WP-CLI executable. | str | no |  |
+| wpcli_required | An internal variable for the required version of WP-CLI. | str | no |  |
 | wpcli_pkgs_present | A list of .deb packages that this role requires. | list of 'str' | yes |  |
 | wpcli_verify | Verify variables that start with wpcli_ using the argument specification. | bool | yes | false |
 | wpcli_version | A version number for WP-CLI or latest for the latest version. | str | yes |  |

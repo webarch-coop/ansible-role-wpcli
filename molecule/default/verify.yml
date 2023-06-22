@@ -34,7 +34,7 @@
       failed_when: molecule_root_which_wp_a.rc is not regex('^0|1$')
 
     - name: Check wp versions
-      ansible.builtin.command: "{{ molecule_wp_path }} --version"
+      ansible.builtin.command: "{{ molecule_wp_path }} --version --allow-root"
       check_mode: false
       changed_when: false
       register: molecule_wp_v
