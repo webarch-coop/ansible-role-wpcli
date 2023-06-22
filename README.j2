@@ -1,4 +1,4 @@
-# Ansible WordPress Command Line Interface (WP-CLI) Role
+# Webarchitects Ansible WordPress Command Line Interface (WP-CLI) Role
 
 [![pipeline status](https://git.coop/webarch/wpcli/badges/master/pipeline.svg)](https://git.coop/webarch/wpcli/-/commits/master)
 
@@ -12,16 +12,15 @@ When run this role:
 * Checks that WP-CLI works before installing it.
 * Installs completion for the Bash shell for WP-CLI.
 
-## Requirements
-
 ## Role Variables
 
-There are eleven [default variables](defaults/main.yml), these should only need
+There are eleven [default variables](defaults/main.yml), set `wpcli` to `true`
+for the tasks in this role to be run, the other defaults should only need
 changing if this role isn't run as `root`.
 
-Documentaion for all the variables, including internal ones which you do not
-need to set, are documented follow, this documentation has been generated from
-the [meta/argument_specs.yml](meta/argument_specs.yml).
+Documentation for all the variables, including internal ones which you do not
+need to set, follow, this documentation has been generated from the
+[meta/argument_specs.yml](meta/argument_specs.yml).
 
 {% for entrypoint in argument_specs.keys() %}
 {%- set path, options=entrypoint_options[entrypoint][0] -%}
@@ -29,20 +28,20 @@ the [meta/argument_specs.yml](meta/argument_specs.yml).
 
 {{ argument_specs[entrypoint].short_description }}
 
-|Option|Description|Type|Required|Default|
-|---|---|---|---|---|
+|Option|Description|Type|Required|
+|---|---|---|---|
 {%- for name, details in options.items() %}
-| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} | {{ details.display_default }} |
+| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} |
 {%- endfor %}
 
 {% if entrypoint_options[entrypoint] | length > 1 -%}
 {% for path, options in entrypoint_options[entrypoint][1:] -%}
 #### Options for {{ path | join(" > ") }}
 
-|Option|Description|Type|Required|Default|
-|---|---|---|---|---|
+|Option|Description|Type|Required|
+|---|---|---|---|
 {%- for name, details in options.items() %}
-| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} | {{ details.display_default }} |
+| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} |
 {%- endfor %}
 
 {% endfor -%}
