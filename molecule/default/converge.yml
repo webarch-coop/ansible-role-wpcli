@@ -75,15 +75,6 @@
       ansible.builtin.debug:
         var: ansible_user_dir
 
-    - name: Required packages absent
-      ansible.builtin.apt:
-        pkg:
-          - bash-completion
-          - gnupg
-          - php-cli
-        update-cache: true
-        state: absent
-
     - name: Include wplic role as root
       ansible.builtin.include_role:
         name: wpcli
