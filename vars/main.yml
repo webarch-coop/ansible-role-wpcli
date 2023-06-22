@@ -12,8 +12,6 @@
 wpclivarnames: "{{ q('varnames', '^wpcli_') | sort }}"
 wpclihostvars: "{{ dict(wpclivarnames | list | zip(q('vars', *wpclivarnames))) }}"
 
-wpcli_installed: null
-
 # https://github.com/wp-cli/builds/blob/gh-pages/README.md
 # https://github.com/wp-cli/wp-cli/issues/5643
 wpcli_gpg_keys:

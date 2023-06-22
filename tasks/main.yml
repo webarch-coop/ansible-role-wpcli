@@ -58,6 +58,11 @@
       register: wpcli_which
       failed_when: wpcli_which.rc is not regex('0|1')
 
+    - name: Set a fact to indicate that WP-CLI is not installed
+      ansible.builtin.set_fact:
+        wpcli_installed: null
+      when: wpcli_which.rc == 1
+
     - name: Set a fact for the WP-CLI path
       ansible.builtin.set_fact:
         wpcli_path: "{% if wpcli_which.rc == 0 %}{{ wpcli_which.stdout }}{% else %}{{ wpcli_bin }}/wp{% endif %}"
