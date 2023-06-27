@@ -2,18 +2,13 @@
 
 [![pipeline status](https://git.coop/webarch/wpcli/badges/master/pipeline.svg)](https://git.coop/webarch/wpcli/-/commits/master)
 
-This repository contains an Ansible role for installing and upgrading
-[WP-CLI](https://wp-cli.org/) on Debian and Ubuntu servers.
+This repository contains an Ansible role for installing and upgrading [WP-CLI](https://wp-cli.org/) on Debian and Ubuntu servers.
 
 ## Role Variables
 
-There are eleven [default variables](defaults/main.yml), set `wpcli` to `true`
-for the tasks in this role to be run, the other defaults should only need
-changing if this role isn't run as `root`.
+There are eleven [default variables](defaults/main.yml), set `wpcli` to `true` for the tasks in this role to be run, the other defaults should only need changing if this role isn't run as `root`.
 
-Documentation for all the variables, including internal ones which you do not
-need to set, follow, this documentation has been generated from the
-[meta/argument_specs.yml](meta/argument_specs.yml).
+Documentation for all the variables, including internal ones which you do not need to set, follow, this documentation has been generated from the [meta/argument_specs.yml](meta/argument_specs.yml).
 
 {% for entrypoint in argument_specs.keys() %}
 {%- set path, options=entrypoint_options[entrypoint][0] -%}
@@ -55,9 +50,7 @@ need to set, follow, this documentation has been generated from the
 
 ## Example Usage
 
-This role can also be used with the [localhost
-repo](https://git.coop/webarch/localhost) to install WP-CLI locally, see also
-the [WordPress role](https://git.coop/webarch/wordpress).
+This role can also be used with the [localhost repo](https://git.coop/webarch/localhost) to install WP-CLI locally, see also the [WordPress role](https://git.coop/webarch/wordpress).
 
 Include this role and run it as `root`:
 
@@ -85,15 +78,9 @@ Include this role and run it as a non-root user:
 
 ## Repository
 
-The primary URL of this repo is
-[`https://git.coop/webarch/wpcli`](https://git.coop/webarch/wpcli) however it
-is also [mirrored to
-GitHub](https://github.com/webarch-coop/ansible-role-wpcli) and [available via
-Ansible Galaxy](https://galaxy.ansible.com/chriscroome/wpcli).
+The primary URL of this repo is [`https://git.coop/webarch/wpcli`](https://git.coop/webarch/wpcli) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-wpcli) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/wpcli).
 
-See the [GitLab releases page](https://git.coop/webarch/wpcli/-/releases) for
-details regarding each version, *please use a specific version* since the
-master branch is used for development.
+See the [GitLab releases page](https://git.coop/webarch/wpcli/-/releases) for details regarding each version, *please use a specific version* since the master branch is used for development.
 
 ## Copyright
 
