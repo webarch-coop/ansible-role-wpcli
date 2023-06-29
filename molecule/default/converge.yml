@@ -75,7 +75,7 @@
       ansible.builtin.debug:
         var: ansible_user_dir
 
-    - name: Include wplic role as root
+    - name: Include wpcli role as root
       ansible.builtin.include_role:
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]
