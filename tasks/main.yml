@@ -132,7 +132,6 @@
           ansible.builtin.get_url:
             url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_required }}/wp-cli-{{ wpcli_required }}.phar"
             dest: "{{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar"
-            http_agent: "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0"
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
             mode: "0600"
