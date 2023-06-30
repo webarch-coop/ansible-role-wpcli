@@ -18,6 +18,8 @@
 
     - name: Run which wp
       ansible.builtin.command: which wp
+      environment:
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_root_which_wp
@@ -28,6 +30,8 @@
 
     - name: Run which wp -a
       ansible.builtin.command: which wp -a
+      environment:
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_root_which_wp_a
@@ -60,6 +64,8 @@
 
     - name: Run which wp
       ansible.builtin.command: which wp
+      environment:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_user_which_wp
@@ -77,6 +83,8 @@
 
     - name: Check wp versions
       ansible.builtin.command: "{{ molecule_wp_path }} --version"
+      environment:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_wp_v
