@@ -26,7 +26,14 @@
       ansible.builtin.include_role:
         name: apt
         tasks_from: local_facts.yml
-      when: ansible_local.dpkg.installed is not defined
+      when:
+        - wpcli_apt_role | bool
+        - ansible_local.dpkg.installed is not defined
+
+    - name: Read package facts
+      ansible.builtin.package_facts:
+        manager: apt
+      when: not wpcli_apt_role | bool
 
     - name: Packages present when root
       ansible.builtin.apt:
@@ -35,12 +42,12 @@
         state: present
       when:
         - ansible_effective_user_id == 0
-        - wpcli_pkgs_present not in ansible_local.dpkg.installed
+        - ( ( ansible_local.dpkg.installed is defined ) and ( wpcli_pkgs_present not in ansible_local.dpkg.installed ) ) or ( ( ansible_facts.packages is defined ) and ( wpcli_pkgs_present not in ansible_facts.packages.keys() ) )
 
     - name: Check packages present when not root
       ansible.builtin.assert:
         that:
-          - wpcli_pkg in ansible_local.dpkg.installed
+          - ( ( ansible_local.dpkg.installed is defined ) and ( wpcli_pkg in ansible_local.dpkg.installed ) ) or ( ( ansible_facts.packages is defined ) and ( wpcli_pkg in ansible_facts.packages.keys() ) )
         fail_msg:
           - "The {{ wpcli_pkg }} is required"
           - "You can install all the requirements using:"
