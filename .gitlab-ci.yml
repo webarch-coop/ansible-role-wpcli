@@ -21,6 +21,7 @@ before_script:
   - cd builds/${CI_PROJECT_ROOT_NAMESPACE}
   - git clone ${CI_PROJECT_URL}.git
   - cd ${CI_PROJECT_NAME}
+  - pwd
   - cat /etc/debian_version
   - which ansible
   - ansible --version
