@@ -22,33 +22,33 @@
       ansible.builtin.include_tasks: verify.yml
       when: wpcli_verify | bool
 
+    - name: Include apt role local fact tasks
+      ansible.builtin.include_role:
+        name: apt
+        tasks_from: local_facts.yml
+      when: ansible_local.dpkg.installed is not defined
+
     - name: Packages present when root
       ansible.builtin.apt:
         pkg: "{{ wpcli_pkgs_present }}"
         update-cache: true
         state: present
-      when: ansible_effective_user_id == 0
+      when:
+        - ansible_effective_user_id == 0
+        - wpcli_pkgs_present not in ansible_local.dpkg.installed
 
-    - name: Check packages when not root
-      block:
-
-        - name: Read package facts
-          ansible.builtin.package_facts:
-            manager: apt
-
-        - name: Check the presence of the required packages
-          ansible.builtin.assert:
-            that:
-              - wpcli_pkg in ansible_facts.packages.keys()
-            fail_msg:
-              - "The {{ wpcli_pkg }} is required"
-              - "You can install all the requirements using:"
-              - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
-            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
-          loop: "{{ wpcli_pkgs_present }}"
-          loop_control:
-            loop_var: wpcli_pkg
-
+    - name: Check packages present when not root
+      ansible.builtin.assert:
+        that:
+          - wpcli_pkg in ansible_local.dpkg.installed
+        fail_msg:
+          - "The {{ wpcli_pkg }} is required"
+          - "You can install all the requirements using:"
+          - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
+        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+      loop: "{{ wpcli_pkgs_present }}"
+      loop_control:
+        loop_var: wpcli_pkg
       when: ansible_effective_user_id != 0
 
     - name: Run which to check if and where WP-CLI is installed
@@ -79,9 +79,9 @@
 
         - name: Check which version of WP-CLI is installed
           ansible.builtin.command: "{{ wpcli_path }} --version{% if ansible_effective_user_id == 0 %} --allow-root{% endif %}"
-          register: wpcli_version_check
           check_mode: false
           changed_when: false
+          register: wpcli_version_check
 
         - name: Set a fact for the installed version of WP-CLI
           ansible.builtin.set_fact:
