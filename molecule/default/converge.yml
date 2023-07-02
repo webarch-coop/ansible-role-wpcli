@@ -75,11 +75,17 @@
       ansible.builtin.debug:
         var: ansible_user_dir
 
+    - name: Apt role present
+      community.general.ansible_galaxy_install:
+        type: role
+        requirements_file: /home/ansible/apt/meta/requirements.yml
+
     - name: Include wpcli role as root
       ansible.builtin.include_role:
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]
         wpcli: true
+        wpcli_apt_role: true
 
 # vim: syntax=yaml
 ...
