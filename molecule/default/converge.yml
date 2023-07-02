@@ -78,7 +78,7 @@
     - name: Apt role present
       community.general.ansible_galaxy_install:
         type: role
-        requirements_file: /home/ansible/apt/meta/requirements.yml
+        requirements_file: /home/ansible/builds/webarch/wpcli/meta/requirements.yml
 
     - name: Include wpcli role as root
       ansible.builtin.include_role:
