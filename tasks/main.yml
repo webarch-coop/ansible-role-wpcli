@@ -22,41 +22,67 @@
       ansible.builtin.include_tasks: verify.yml
       when: wpcli_verify | bool
 
-    - name: Include apt role local fact tasks
-      ansible.builtin.include_role:
-        name: apt
-        tasks_from: local_facts.yml
-      when:
-        - wpcli_apt_role | bool
-        - ansible_local.dpkg.installed is not defined
+    - name: Use apt role local facts
+      block:
 
-    - name: Read package facts
-      ansible.builtin.package_facts:
-        manager: apt
+        - name: Include apt role local fact tasks
+          ansible.builtin.include_role:
+            name: apt
+            tasks_from: local_facts.yml
+          when: ansible_local.dpkg.installed is not defined
+
+        - name: Packages present when root
+          ansible.builtin.apt:
+            pkg: "{{ wpcli_pkgs_present }}"
+            update-cache: true
+            state: present
+          when: ansible_effective_user_id == 0
+
+        - name: Check packages present when not root
+          ansible.builtin.assert:
+            that:
+              - wpcli_pkg in ansible_local.dpkg.installed
+            fail_msg:
+              - "The {{ wpcli_pkg }} is required"
+              - "You can install all the requirements using:"
+              - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+          loop: "{{ wpcli_pkgs_present }}"
+          loop_control:
+            loop_var: wpcli_pkg
+          when: ansible_effective_user_id != 0
+
+      when: wpcli_apt_role | bool
+
+    - name: Use Ansible package facts
+      block:
+
+        - name: Read package facts
+          ansible.builtin.package_facts:
+            manager: apt
+
+        - name: Packages present when root
+          ansible.builtin.apt:
+            pkg: "{{ wpcli_pkgs_present }}"
+            update-cache: true
+            state: present
+          when: ansible_effective_user_id == 0
+
+        - name: Check packages present when not root
+          ansible.builtin.assert:
+            that:
+              - wpcli_pkg in ansible_facts.packages.keys()
+            fail_msg:
+              - "The {{ wpcli_pkg }} is required"
+              - "You can install all the requirements using:"
+              - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+          loop: "{{ wpcli_pkgs_present }}"
+          loop_control:
+            loop_var: wpcli_pkg
+          when: ansible_effective_user_id != 0
+
       when: not wpcli_apt_role | bool
-
-    - name: Packages present when root
-      ansible.builtin.apt:
-        pkg: "{{ wpcli_pkgs_present }}"
-        update-cache: true
-        state: present
-      when:
-        - ansible_effective_user_id == 0
-        - ( ( ansible_local.dpkg.installed is defined ) and ( wpcli_pkgs_present not in ansible_local.dpkg.installed ) ) or ( ( ansible_facts.packages is defined ) and ( wpcli_pkgs_present not in ansible_facts.packages.keys() ) )
-
-    - name: Check packages present when not root
-      ansible.builtin.assert:
-        that:
-          - ( ( ansible_local.dpkg.installed is defined ) and ( wpcli_pkg in ansible_local.dpkg.installed ) ) or ( ( ansible_facts.packages is defined ) and ( wpcli_pkg in ansible_facts.packages.keys() ) )
-        fail_msg:
-          - "The {{ wpcli_pkg }} is required"
-          - "You can install all the requirements using:"
-          - "sudo apt install{% for wpcli_pkg_missing in wpcli_pkgs_present %} {{ wpcli_pkg_missing }}{% endfor %}"
-        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
-      loop: "{{ wpcli_pkgs_present }}"
-      loop_control:
-        loop_var: wpcli_pkg
-      when: ansible_effective_user_id != 0
 
     - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command: "which {{ wpcli_name }}"
