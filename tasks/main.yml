@@ -101,6 +101,7 @@
         status_code: 302
         follow_redirects: none
       check_mode: false
+      changed_when: false
       register: wpcli_headers
 
     - name: Debug WP-CLI URI
