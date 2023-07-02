@@ -18,6 +18,10 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role
+      wpcli_apt_role:
+        type: bool
+        required: true
+        description: Use the apt role for local_facts.
       wpcli_bash_completion_dir:
         type: str
         required: true

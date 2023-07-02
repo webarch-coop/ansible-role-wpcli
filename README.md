@@ -17,6 +17,7 @@ The main entry point for the WP-CLI role.
 |Option|Description|Type|Required|
 |---|---|---|---|
 | wpcli | Run the tasks in this role | bool | yes |
+| wpcli_apt_role | Use the apt role for local_facts. | bool | yes |
 | wpcli_bash_completion_dir | The directory into which the Bash completion will be installed. | str | yes |
 | wpcli_bin | The directory into which WP-CLI will be installed. | str | yes |
 | wpcli_download_dir | The directory used for downloading files. | str | yes |
@@ -46,8 +47,6 @@ The main entry point for the WP-CLI role.
 |---|---|---|---|
 | id | A GPG ID corresponding to a file name for the GPG public key. | str | yes |
 | ver | A WP-CLI version number. | str | yes |
-
-
 
 ## Example Usage
 
