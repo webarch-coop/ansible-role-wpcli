@@ -8,45 +8,7 @@ This repository contains an Ansible role for installing and upgrading [WP-CLI](h
 
 There are eleven [default variables](defaults/main.yml), set `wpcli` to `true` for the tasks in this role to be run, the other defaults should only need changing if this role isn't run as `root`.
 
-Documentation for all the variables, including internal ones which you do not need to set, follow, this documentation has been generated from the [meta/argument_specs.yml](meta/argument_specs.yml).
-
-### Entrypoint: main
-
-The main entry point for the WP-CLI role.
-
-|Option|Description|Type|Required|
-|---|---|---|---|
-| wpcli | Run the tasks in this role | bool | yes |
-| wpcli_apt_role | Use the apt role for local_facts. | bool | yes |
-| wpcli_bash_completion_dir | The directory into which the Bash completion will be installed. | str | yes |
-| wpcli_bin | The directory into which WP-CLI will be installed. | str | yes |
-| wpcli_download_dir | The directory used for downloading files. | str | yes |
-| wpcli_gpg_import | An internl variable for the gpg import key results. | dict | no |
-| wpcli_gpg_key | An internal variable for the GPG key ID. | str | no |
-| wpcli_gpg_keys | An internal list of WP-CLI versions and the GPG key ID used to sign the release. | list of dicts of 'wpcli_gpg_keys' options | yes |
-| wpcli_gpg_verify | Use GPG to verify WP-CLI. | bool | yes |
-| wpcli_gpg_verify_sig | An internal variable for the results of verifying the GPG signature. | dict | no |
-| wpcli_group | The group for the WP-CLI files. | str | yes |
-| wpcli_headers | An internal variable for the results of the HEAD request to check the latest WP-CLI versions available at GitHub. | dict | no |
-| wpcli_installed | An internal variable for the installed version of WP-CLI. | str | no |
-| wpcli_latest | An internal variable for the latest version of WP-CLI. | str | no |
-| wpcli_name | The file name of the WP-CLI executable. | str | yes |
-| wpcli_owner | The owner of the WP-CLI files. | str | yes |
-| wpcli_path | An internal variable for the full path to the WP-CLI executable. | str | yes |
-| wpcli_path_default | An internal variable for the full path to the default WP-CLI executable. | str | no |
-| wpcli_required | An internal variable for the required version of WP-CLI. | str | no |
-| wpcli_pkgs_present | A list of .deb packages that this role requires. | list of 'str' | yes |
-| wpcli_verify | Verify variables that start with wpcli_ using the argument specification. | bool | yes |
-| wpcli_version | A version number for WP-CLI or latest for the latest version. | str | yes |
-| wpcli_version_check | An internal variable for the results of checking the installed version of WP-CLI. | dict | no |
-| wpcli_which | An internal variable for the results of running which to get the WP-CLI path. | dict | no |
-
-#### Options for main > wpcli_gpg_keys
-
-|Option|Description|Type|Required|
-|---|---|---|---|
-| id | A GPG ID corresponding to a file name for the GPG public key. | str | yes |
-| ver | A WP-CLI version number. | str | yes |
+See the [defaults/main.yml](defaults/main.yml) for the role defaults and [VARIABLES.md](VARIABLES.md) file for documentation automatically generated from the [meta/argument_specs.yml](meta/argument_specs.yml) for all the role variables.
 
 ## Example Usage
 

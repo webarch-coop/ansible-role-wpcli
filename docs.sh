@@ -6,4 +6,4 @@
 #
 # pipx install git+https://gitlab.com/kpfleming/ansible-role-docs.git
 
-ansible-role-docs --output-file README.md --output-mode replace --output-template README.j2 . markdown
+ansible-role-docs --output-file VARIABLES.md --output-mode replace --output-template VARIABLES.j2 . markdown

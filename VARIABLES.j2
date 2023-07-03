@@ -1,0 +1,75 @@
+<!-- BEGIN_ANSIBLE_DOCS -->
+# Ansible Role: {{ role }}
+
+{%- if "version" in galaxy_collection %}
+Version: {{ galaxy_collection.version }}
+{% endif %}
+
+{{ metadata.galaxy_info.description }}
+
+{% if ("galaxy_tags" in metadata.galaxy_info) and (metadata.galaxy_info.galaxy_tags | length > 0) %}
+Tags: {{ metadata.galaxy_info.galaxy_tags | join(', ') }}
+{%- endif %}
+
+## Requirements
+
+| Platform | Versions |
+| -------- | -------- |
+{%- for platform in metadata.galaxy_info.platforms %}
+| {{ platform.name }} | {{ platform.versions | default([]) | join(', ') }} |
+{%- endfor %}
+
+## Defaults
+
+See [defaults/main.yml](defaults/main.yml).
+
+## Role Variables
+
+{% for entrypoint in argument_specs.keys() %}
+{%- set path, options=entrypoint_options[entrypoint][0] -%}
+### Entrypoint: {{ entrypoint }}
+
+{{ argument_specs[entrypoint].short_description }}
+
+|Option|Description|Type|Required|Default|
+|---|---|---|---|---|
+{%- for name, details in options.items() %}
+| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} | {{ details.display_default }} |
+{%- endfor %}
+
+{% if entrypoint_options[entrypoint] | length > 1 -%}
+{% for path, options in entrypoint_options[entrypoint][1:] -%}
+#### Options for {{ path | join(" > ") }}
+
+|Option|Description|Type|Required|Default|
+|---|---|---|---|---|
+{%- for name, details in options.items() %}
+| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} | {{ details.display_default }} |
+{%- endfor %}
+
+{% endfor -%}
+{% endif -%}
+{% if entrypoint in entrypoint_choices -%}
+{% for path, choices in entrypoint_choices[entrypoint] -%}
+#### Choices for {{ path | join(" > ") }}
+
+|Choice|
+|---|
+{%- for item in choices %}
+| {{ item }} |
+{%- endfor %}
+
+{% endfor -%}
+{% endif -%}
+{% endfor %}
+## Dependencies
+
+{%- if ("dependencies" in metadata) and (metadata.dependencies | length > 0) %}
+{%- for dependency in metadata.dependencies %}
+- {{ dependency }}
+{%- endfor %}
+{%- else %}
+None.
+{%- endif %}
+
+<!-- END_ANSIBLE_DOCS -->
