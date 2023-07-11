@@ -17,7 +17,7 @@ argument_specs:
       wpcli:
         type: bool
         required: true
-        description: Run the tasks in this role
+        description: Run the tasks in this role.
       wpcli_apt_role:
         type: bool
         required: true

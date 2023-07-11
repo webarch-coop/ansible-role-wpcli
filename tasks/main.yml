@@ -25,10 +25,16 @@
     - name: Use apt role local facts
       block:
 
-        - name: Include apt role local fact tasks
+        - name: Include apt role local fact tasks  # noqa: var-naming[no-role-prefix]
           ansible.builtin.include_role:
             name: apt
             tasks_from: local_facts.yml
+          vars:
+            apt: true
+            apt_local_facts: true
+            apt_local_facts_files:
+              - name: dpkg.fact
+                state: present
           when: ansible_local.dpkg.installed is not defined
 
         - name: Packages present when root
