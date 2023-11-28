@@ -161,9 +161,9 @@
     - name: Debug the installed, latest and required version of WP-CLI
       ansible.builtin.debug:
         msg:
-          - "wpcli_installed is a {{ wpcli_installed | type_debug }} variable with the value {{ wpcli_installed }}"
-          - "wpcli_latest is a {{ wpcli_latest | type_debug }} variable with the value {{ wpcli_latest }}"
-          - "wpcli_required is a {{ wpcli_required | type_debug }} variable with the value {{ wpcli_required }}"
+          - "wpcli_installed is version {{ wpcli_installed }}"
+          - "wpcli_latest is version {{ wpcli_latest }}"
+          - "wpcli_required version {{ wpcli_required }}"
 
     - name: Install or downgrade / upgrade WP-CLI
       block:
