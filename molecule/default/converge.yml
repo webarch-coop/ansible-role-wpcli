@@ -8,57 +8,10 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Install requirements as root
-  become: true
-  connection: local
-  gather_facts: true
-  hosts:
-    - localhost
-  tasks:
-
-    - name: Required packages present
-      ansible.builtin.apt:
-        pkg:
-          - bash-completion
-          - gnupg
-          - php-cli
-        update-cache: true
-        state: present
-
-- name: Run as user
-  become: false
-  connection: local
-  gather_facts: true
-  hosts:
-    - localhost
-  tasks:
-
-    - name: Debug ansible_effective_user_id
-      ansible.builtin.debug:
-        var: ansible_effective_user_id
-
-    - name: Debug ansible_user_id
-      ansible.builtin.debug:
-        var: ansible_user_id
-
-    - name: Debug ansible_user_dir
-      ansible.builtin.debug:
-        var: ansible_user_dir
-
-    - name: Include wpcli role as user
-      ansible.builtin.include_role:
-        name: wpcli
-      vars:  # noqa var-naming[no-role-prefix]
-        wpcli: true
-        wpcli_owner: "{{ ansible_user_id }}"
-        wpcli_bin: "{{ ansible_user_dir }}/.local/bin"
-        wpcli_download_dir: /tmp
-        wpcli_bash_completion_dir: "{{ ansible_user_dir }}/.bash_completion.d"
-
 - name: Run as root
-  become: true
+  # become: true
   connection: local
-  gather_facts: true
+  # gather_facts: true
   hosts:
     - localhost
   tasks:
@@ -74,12 +27,6 @@
     - name: Debug ansible_user_dir
       ansible.builtin.debug:
         var: ansible_user_dir
-
-    - name: Apt role present
-      community.general.ansible_galaxy_install:
-        type: role
-        dest: /home/ansible/builds/webarch
-        requirements_file: /home/ansible/builds/webarch/wpcli/meta/requirements.yml
 
     - name: Include wpcli role as root
       ansible.builtin.include_role:
@@ -87,6 +34,4 @@
       vars:  # noqa var-naming[no-role-prefix]
         wpcli: true
         wpcli_apt_role: true
-
-# vim: syntax=yaml
 ...

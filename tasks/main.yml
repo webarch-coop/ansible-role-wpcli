@@ -192,6 +192,8 @@
                 src: A3A2E8F226F0BC06.asc
                 dest: "{{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
                 mode: "0600"
+              check_mode: false
+              changed_when: false
 
             - name: WP-CLI GPG public key imported
               ansible.builtin.command: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"

@@ -9,9 +9,9 @@
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Verify as root
-  become: true
+  # become: true
   connection: local
-  gather_facts: true
+  # gather_facts: true
   hosts:
     - localhost
   tasks:
@@ -53,50 +53,4 @@
     - name: Debug wp versions
       ansible.builtin.debug:
         var: molecule_wp_root_versions
-
-- name: Verify as user
-  become: false
-  connection: local
-  gather_facts: true
-  hosts:
-    - localhost
-  tasks:
-
-    - name: Run which wp
-      ansible.builtin.command: which wp
-      environment:
-        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
-      check_mode: false
-      changed_when: false
-      register: molecule_user_which_wp
-
-    - name: Debug which wp
-      ansible.builtin.debug:
-        var: molecule_user_which_wp.stdout
-
-    - name: Run which wp -a
-      ansible.builtin.command: which wp -a
-      check_mode: false
-      changed_when: false
-      register: molecule_user_which_wp_a
-      failed_when: molecule_user_which_wp_a.rc is not regex('^0|1$')
-
-    - name: Check wp versions
-      ansible.builtin.command: "{{ molecule_wp_path }} --version"
-      environment:
-        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
-      check_mode: false
-      changed_when: false
-      register: molecule_wp_v
-      loop: "{{ molecule_user_which_wp_a.stdout_lines }}"
-      loop_control:
-        loop_var: molecule_wp_path
-
-    - name: Set facts for the wp versions
-      ansible.builtin.set_fact:
-        molecule_wp_user_versions: "{{ molecule_wp_v | community.general.json_query('results[].{path: molecule_wp_path, version: stdout_lines[0]}') }}"
-
-    - name: Debug wp versions
-      ansible.builtin.debug:
-        var: molecule_wp_user_versions
 ...

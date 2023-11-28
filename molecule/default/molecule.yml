@@ -8,13 +8,23 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-dependency:
+dependency: 
   name: galaxy
 platforms:
   - name: instance
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      ansible_managed: Ansible managed
+    # host_vars:
+    #   instance: 
+    #     ansible_user: ansible
+  options:
+    D: true
 verifier:
   name: ansible
-# vim: syntax=yaml
+    # host_vars:
+    #   instance:
+    #     ansible_user: ansible
 ...
