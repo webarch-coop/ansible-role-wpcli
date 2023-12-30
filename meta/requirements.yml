@@ -10,6 +10,6 @@
 ---
 - name: apt
   src: https://git.coop/webarch/apt.git
-  version: 3.0.2  # apt
+  version: 3.1.0  # apt
   scm: git
 ...
