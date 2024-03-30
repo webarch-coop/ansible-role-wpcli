@@ -32,25 +32,31 @@ stages:
   - bookworm
   # - bullseye
   - jammy
+  - noble
   - trixie
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20231213
+  image: registry.git.coop/webarch/containers/images/bookworm:20240326
   stage: bookworm
   script:
     - molecule test
 # https://github.com/ansible/molecule/discussions/4020
 # bullseye:
-#   image: registry.git.coop/webarch/containers/images/bullseye:20231213
+#   image: registry.git.coop/webarch/containers/images/bullseye:20240326
 #   stage: bullseye
 #   script:
 #     - molecule test
 jammy:
-  image: registry.git.coop/webarch/containers/images/jammy:20231213
+  image: registry.git.coop/webarch/containers/images/jammy:20240326
   stage: jammy
   script:
     - molecule test
+noble:
+  image: registry.git.coop/webarch/containers/images/noble:20240326
+  stage: noble
+  script:
+    - molecule test
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20231213
+  image: registry.git.coop/webarch/containers/images/trixie:20240326
   stage: trixie
   script:
     - molecule test
