@@ -1,10 +1,4 @@
-<!-- BEGIN_ANSIBLE_DOCS -->
 # Ansible Role: wpcli
-
-Ansible role for installing WP CLI on Debian and Ubuntu servers
-
-
-Tags: debian, ubuntu, wp, wpcli, wordpress
 
 ## Requirements
 
@@ -56,9 +50,3 @@ The main entry point for the WP-CLI role.
 |---|---|---|---|---|
 | id | A GPG ID corresponding to a file name for the GPG public key. | str | yes |  |
 | ver | A WP-CLI version number. | str | yes |  |
-
-
-## Dependencies
-None.
-
-<!-- END_ANSIBLE_DOCS -->
