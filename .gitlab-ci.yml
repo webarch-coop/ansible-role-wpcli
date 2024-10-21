@@ -10,8 +10,13 @@
 ---
 variables:
   ANSIBLE_CALLBACK_RESULT_FORMAT: "yaml"
+  ANSIBLE_DEFAULT_VERBOSITY: "1"
+  ANSIBLE_DIFF_ALWAYS: "1"
   ANSIBLE_DISPLAY_SKIPPED_HOSTS: "0"
+  ANSIBLE_ERROR_ON_UNDEFINED_VARS: "1"
   ANSIBLE_FORCE_COLOR: "1"
+  ANSIBLE_INJECT_FACT_VARS: "0"
+  ANSIBLE_NOCOWS: "1"
   ANSIBLE_REMOTE_TMP: "/tmp"
   ANSIBLE_SHELL_ALLOW_WORLD_READABLE_TEMP: "1"
   DEBIAN_FRONTEND: noninteractive
@@ -30,34 +35,35 @@ before_script:
   - molecule --version
 stages:
   - bookworm
-  # - bullseye
   - jammy
   - noble
   - trixie
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20240721
+  image: registry.git.coop/webarch/containers/images/bookworm:20241008
   stage: bookworm
   script:
+    - pre-commit install
+    - pre-commit run --all-files
     - molecule test
-# https://github.com/ansible/molecule/discussions/4020
-# bullseye:
-#   image: registry.git.coop/webarch/containers/images/bullseye:20240721
-#   stage: bullseye
-#   script:
-#     - molecule test
 jammy:
-  image: registry.git.coop/webarch/containers/images/jammy:20240721
+  image: registry.git.coop/webarch/containers/images/jammy:20241008
   stage: jammy
   script:
+    - pre-commit install
+    - pre-commit run --all-files
     - molecule test
 noble:
-  image: registry.git.coop/webarch/containers/images/noble:20240721
+  image: registry.git.coop/webarch/containers/images/noble:20241008
   stage: noble
   script:
+    - pre-commit install
+    - pre-commit run --all-files
     - molecule test
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20240721
+  image: registry.git.coop/webarch/containers/images/trixie:20241008
   stage: trixie
   script:
+    - pre-commit install
+    - pre-commit run --all-files
     - molecule test
 ...

@@ -25,7 +25,7 @@
     - name: Use apt role local facts
       block:
 
-        - name: Include apt role local fact tasks  # noqa: var-naming[no-role-prefix]
+        - name: Include apt role local fact tasks  # noqa: var-naming[no-role-prefix] var-naming[pattern]
           ansible.builtin.include_role:
             name: apt
             tasks_from: local_facts.yml
@@ -35,19 +35,19 @@
             apt_local_facts_files:
               - name: dpkg.fact
                 state: present
-          when: ansible_local.dpkg.installed is not defined
+          when: ansible_facts.ansible_local.dpkg.installed is not defined
 
         - name: Packages present when root
           ansible.builtin.apt:
             pkg: "{{ wpcli_pkgs_present }}"
             update-cache: true
             state: present
-          when: ansible_effective_user_id == 0
+          when: ansible_facts.ansible_effective_user_id == 0
 
         - name: Check packages present when not root
           ansible.builtin.assert:
             that:
-              - wpcli_pkg in ansible_local.dpkg.installed
+              - wpcli_pkg in ansible_facts.ansible_local.dpkg.installed
             fail_msg:
               - "The {{ wpcli_pkg }} is required"
               - "You can install all the requirements using:"
@@ -56,7 +56,7 @@
           loop: "{{ wpcli_pkgs_present }}"
           loop_control:
             loop_var: wpcli_pkg
-          when: ansible_effective_user_id != 0
+          when: ansible_facts.effective_user_id != 0
 
       when: wpcli_apt_role | bool
 
@@ -72,7 +72,7 @@
             pkg: "{{ wpcli_pkgs_present }}"
             update-cache: true
             state: present
-          when: ansible_effective_user_id == 0
+          when: ansible_facts.effective_user_id == 0
 
         - name: Check packages present when not root
           ansible.builtin.assert:
@@ -86,7 +86,7 @@
           loop: "{{ wpcli_pkgs_present }}"
           loop_control:
             loop_var: wpcli_pkg
-          when: ansible_effective_user_id != 0
+          when: ansible_facts.effective_user_id != 0
 
       when: not wpcli_apt_role | bool
 
@@ -117,7 +117,7 @@
             - wpcli_path_default != wpcli_path
 
         - name: Check which version of WP-CLI is installed
-          ansible.builtin.command: "{{ wpcli_path }} --version{% if ansible_effective_user_id == 0 %} --allow-root{% endif %}"
+          ansible.builtin.command: "{{ wpcli_path }} --version{% if ansible_facts.effective_user_id == 0 %} --allow-root{% endif %}"
           check_mode: false
           changed_when: false
           register: wpcli_version_check

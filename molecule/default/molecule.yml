@@ -17,14 +17,11 @@ provisioner:
   config_options:
     defaults:
       ansible_managed: Ansible managed
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
+      duplicate_dict_key: error
+      error_on_undefined_vars: true
+      inject_facts_as_vars: false
   options:
     D: true
 verifier:
   name: ansible
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
 ...
