@@ -9,6 +9,7 @@
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 variables:
+  ANSIBLE_ANY_ERRORS_FATAL: "1"
   ANSIBLE_CALLBACK_RESULT_FORMAT: "yaml"
   ANSIBLE_DEFAULT_VERBOSITY: "1"
   ANSIBLE_DIFF_ALWAYS: "1"
