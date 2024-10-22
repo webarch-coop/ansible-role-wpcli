@@ -42,7 +42,7 @@
             pkg: "{{ wpcli_pkgs_present }}"
             update-cache: true
             state: present
-          when: ansible_facts.ansible_effective_user_id == 0
+          when: ansible_facts.effective_user_id == 0
 
         - name: Check packages present when not root
           ansible.builtin.assert:
