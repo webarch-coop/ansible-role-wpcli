@@ -8,6 +8,8 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+ansible_managed: Ansible managed
+
 # https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
 wpclivarnames: "{{ q('varnames', '^wpcli_') | sort }}"
 wpclihostvars: "{{ dict(wpclivarnames | list | zip(q('vars', *wpclivarnames))) }}"
