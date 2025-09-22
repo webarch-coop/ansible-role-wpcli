@@ -35,11 +35,19 @@ before_script:
   - molecule --version
 stages:
   - bookworm
+  - forky
   - noble
   - trixie
 bookworm:
   image: registry.git.coop/webarch/containers/images/bookworm:20250916
   stage: bookworm
+  script:
+    - pre-commit install
+    - pre-commit run --all-files
+    - molecule test
+forky:
+  image: registry.git.coop/webarch/containers/images/forky:20250916
+  stage: forky
   script:
     - pre-commit install
     - pre-commit run --all-files
