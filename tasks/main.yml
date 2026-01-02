@@ -281,7 +281,10 @@
           failed_when: wpcli_which.rc is not regex('0|1')
 
         - name: Update to the latest WP-CLI nightly
-          ansible.builtin.command: wp cli update --nightly
+          ansible.builtin.expect:
+            command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
+            responses:
+              '^.*Would you like to update to the latest nightly version?.*$': "y"
           changed_when: false
           when: wpcli_which.rc == 0
 

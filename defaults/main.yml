@@ -21,6 +21,7 @@ wpcli_pkgs_present:
   - bash-completion
   - gnupg
   - php-cli
+  - python3-pexpect
 wpcli_verify: true
 wpcli_version: nightly
 ...

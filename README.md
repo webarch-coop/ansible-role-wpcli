@@ -6,9 +6,8 @@ This repository contains an Ansible role for installing and upgrading [WP-CLI](h
 
 ## Role Variables
 
-There are eleven [default variables](defaults/main.yml), set `wpcli` to `true` for the tasks in this role to be run, the other defaults should only need changing if this role isn't run as `root`.
-
-See the [defaults/main.yml](defaults/main.yml) for the role defaults and [VARIABLES.md](VARIABLES.md) file for documentation automatically generated from the [meta/argument_specs.yml](meta/argument_specs.yml) for all the role variables.
+See the [default variables](defaults/main.yml), set `wpcli` to `true` for the tasks in this role to be run, the other defaults should only need changing if this role isn't run as `root`.
+r a specific version is required.
 
 ## Example Usage
 
