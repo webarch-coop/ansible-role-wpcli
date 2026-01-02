@@ -35,7 +35,7 @@ argument_specs:
         required: false
         description: Internal string for the required WP-CLI GPG key ID.
       wpcli_gpg_keys:
-        type: dict
+        type: list
         required: false
         description: List of WP-CLI versions and GPG key fingerprints.
         options:
