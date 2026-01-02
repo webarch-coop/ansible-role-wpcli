@@ -1,4 +1,4 @@
-# Copyright 2018-2025 Chris Croome
+# Copyright 2018-2026 Chris Croome
 #
 # This file is part of the Webarchitects WP-CLI Ansible role.
 #
@@ -156,7 +156,12 @@
 
     - name: Set a fact for the required version of WP-CLI
       ansible.builtin.set_fact:
-        wpcli_required: "{% if wpcli_version == 'latest' %}{{ wpcli_latest }}{% else %}{{ wpcli_version }}{% endif %}"
+        wpcli_required: >-
+          {%- if wpcli_version is ansible.builtin.regex('^[latest|nightly]$') -%}
+          {{-     wpcli_latest -}}
+          {%- else -%}
+          {{-     wpcli_version -}}
+          {%- endif -%}
 
     - name: Debug the installed, latest and required version of WP-CLI
       ansible.builtin.debug:
@@ -260,7 +265,17 @@
             group: "{{ wpcli_group }}"
             mode: "0644"
 
-      when: ( wpcli_which.rc == 1 ) or ( wpcli_installed is version(wpcli_required, 'ne') )
+      when: >-
+        (wpcli_which.rc == 1) or
+        ((wpcli_installed is version(wpcli_required, 'ne')) and
+        (wpcli_version != "nightly"))
+
+    - name: Update WP-CLI nightly
+      ansible.builtin.command: wp cli update --nightly
+      changed_when: true
+      when:
+        - wpcli_which.rc == 0
+        - wpcli_required == "nightly"
 
   when: wpcli | bool
   tags:

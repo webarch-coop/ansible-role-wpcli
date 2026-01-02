@@ -1,4 +1,4 @@
-# Copyright 2018-2025 Chris Croome
+# Copyright 2018-2026 Chris Croome
 #
 # This file is part of the Webarchitects WP-CLI Ansible role.
 #
@@ -10,15 +10,15 @@
 ---
 dependency:
   name: galaxy
+  options:
+    force: true
 platforms:
   - name: instance
 provisioner:
   name: ansible
   config_options:
     defaults:
-      ansible_managed: Ansible managed
       duplicate_dict_key: error
-      error_on_undefined_vars: true
       inject_facts_as_vars: false
   options:
     D: true

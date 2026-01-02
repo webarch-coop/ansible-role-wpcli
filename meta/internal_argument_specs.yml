@@ -1,0 +1,91 @@
+# Copyright 2018-2026 Chris Croome
+#
+# This file is part of the Webarchitects WP-CLI Ansible role.
+#
+# The Webarchitects WP-CLI Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects WP-CLI Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects WP-CLI Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+argument_specs:
+  main:
+    author: Chris Croome
+    description: Ansible role to install WP-CLI on Debian and Ubuntu.
+    short_description: The main entry point for the WP-CLI role.
+    options:
+      wpcli_argument_spec:
+        type: dict
+        required: false
+        description: Internal variable for the argument spec.
+      wpcli_argument_spec_lookup:
+        type: str
+        required: false
+        description: Internal variable for the results of a lookup for the argument spec.
+      wpcli_combined_argument_spec:
+        type: dict
+        required: false
+        desciption: Internal variable for the combined argument spec.
+      wpcli_gpg_import:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from gpg --import.
+      wpcli_gpg_key:
+        type: dict
+        required: true
+        description: List of WP-CLI versions and GPG key fingerprints.
+        options:
+          id:
+            type: str
+            required: true
+            description: GPG key ID.
+          ver:
+            type: str
+            required: true
+            description: WP-CLI version.
+      wpcli_gpg_verify_sig:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from gpg --verify.
+      wpcli_headers:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from ansible.builtin.uri from checking the HTTP headers of the latest URL.
+      wpcli_installed:
+        type: str
+        required: false
+        description: The installed version of WP-CLI.
+      wpcli_internal_argument_spec:
+        type: dict
+        required: false
+        description: Internal variable for the internal argument spec.
+      wpcli_internal_argument_spec_lookup:
+        type: str
+        required: false
+        description: Internal variable for the results of a lookup for the internal argument spec.
+      wpcli_latest:
+        type: str
+        required: false
+        description: The latest version of WP-CLI.
+      wpcli_path_default:
+        type: str
+        required: false
+        description: The WP-CLI default path.
+      wpcli_path:
+        type: str
+        required: false
+        description: The WP-CLI path.
+      wpcli_required:
+        type: str
+        required: false
+        description: The required version of WP-CLI.
+      wpcli_which:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from running which wp.
+      wpcli_version_check:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from running wp --version.
+
+...

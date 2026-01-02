@@ -1,4 +1,4 @@
-# Copyright 2018-2025 Chris Croome
+# Copyright 2018-2026 Chris Croome
 #
 # This file is part of the Webarchitects WP-CLI Ansible role.
 #
@@ -11,19 +11,63 @@
 - name: Verify WP-CLI variables
   block:
 
-    - name: Debug the hostvars variable names that start with wpcli_
+    - name: Debug wpclivarnames
       ansible.builtin.debug:
         var: wpclivarnames
-        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
 
-    - name: Debug the hostvars variable names that start with wpcli_
+    - name: Debug wpclihostvars
       ansible.builtin.debug:
         var: wpclihostvars
-        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
 
-    - name: Check wpcli_ variables using meta/argument_specs.yml
+    - name: Debug lookup meta/argument_specs.yml
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.file', 'meta/argument_specs.yml', errors='strict') }}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
+
+    - name: Debug lookup meta/argument_specs.yml type
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.file', 'meta/argument_specs.yml', errors='strict') | ansible.builtin.type_debug }}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
+
+    - name: Debug lookup meta/internal_argument_specs.yml
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml', errors='strict') }}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
+
+    - name: Debug lookup meta/internal_argument_specs.yml type
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml', errors='strict') | ansible.builtin.type_debug }}"
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
+
+    - name: Set a fact for the argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        wpcli_argument_spec: "{{ wpcli_argument_spec_lookup | ansible.builtin.from_yaml }}"
+        wpcli_internal_argument_spec: "{{ wpcli_internal_argument_spec_lookup | ansible.builtin.from_yaml }}"
+      vars:
+        wpcli_argument_spec_lookup: "{{ lookup('ansible.builtin.file', 'meta/argument_specs.yml', errors='strict') }}"
+        wpcli_internal_argument_spec_lookup: "{{ lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml', errors='strict') }}"
+
+    - name: Set a fact for the combined argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        wpcli_combined_argument_spec: "{{ wpcli_argument_spec | ansible.builtin.combine(wpcli_internal_argument_spec, recursive=true) }}"
+
+    - name: Check wpcli_ variables using the combined argument spec
       ansible.builtin.validate_argument_spec:
-        argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
+        argument_spec: "{{ wpcli_combined_argument_spec['argument_specs']['main']['options'] }}"
         provided_arguments: "{{ wpclihostvars }}"
 
   when: wpcli_verify | bool

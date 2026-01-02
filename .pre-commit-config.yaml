@@ -1,4 +1,4 @@
-# Copyright 2018-2025 Chris Croome
+# Copyright 2018-2026 Chris Croome
 #
 # This file is part of the Webarchitects WP-CLI Ansible role.
 #
@@ -25,7 +25,7 @@ repos:
           - templates
   # https://github.com/jackdewinter/pymarkdown/releases
   - repo: https://github.com/jackdewinter/pymarkdown
-    rev: v0.9.32
+    rev: v0.9.34
     hooks:
       - id: pymarkdown
         name: Markdown Lint
@@ -34,14 +34,14 @@ repos:
           - 'README.md'
   # https://github.com/ansible/ansible-lint/releases
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v25.9.0
+    rev: v25.12.1
     hooks:
       - id: ansible-lint
         name: Ansible Lint
         language: python
         additional_dependencies:
           # https://github.com/kellyjonbrazil/jc/releases
-          - jc==1.25.5
+          - jc==1.25.6
           # https://github.com/jmespath/jmespath.py/tags
           - jmespath==1.0.1
 ...

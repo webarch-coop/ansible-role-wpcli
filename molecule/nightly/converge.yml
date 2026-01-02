@@ -34,6 +34,7 @@
       vars:  # noqa var-naming[no-role-prefix]
         wpcli: true
         wpcli_apt_role: true
+        wpcli_version: nightly
 
     - name: Include MariaDB role verify argument spec tasks
       ansible.builtin.include_role:
