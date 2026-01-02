@@ -32,7 +32,7 @@ argument_specs:
         description: Internal dictionary with the results from gpg --import.
       wpcli_gpg_key:
         type: dict
-        required: true
+        required: false
         description: List of WP-CLI versions and GPG key fingerprints.
         options:
           id:
