@@ -270,12 +270,22 @@
         ((wpcli_installed is version(wpcli_required, 'ne')) and
         (wpcli_version != "nightly"))
 
-    - name: Update WP-CLI nightly
-      ansible.builtin.command: wp cli update --nightly
-      changed_when: true
-      when:
-        - wpcli_which.rc == 0
-        - wpcli_required == "nightly"
+    - name: WP-CLI nightly
+      block:
+
+        - name: Run which to check if and where WP-CLI is installed
+          ansible.builtin.command: "which {{ wpcli_name }}"
+          check_mode: false
+          changed_when: false
+          register: wpcli_which
+          failed_when: wpcli_which.rc is not regex('0|1')
+
+        - name: Update WP-CLI nightly
+          ansible.builtin.command: wp cli update --nightly
+          changed_when: true
+          when: wpcli_which.rc == 0
+
+      when: wpcli_version == "nightly"
 
   when: wpcli | bool
   tags:
