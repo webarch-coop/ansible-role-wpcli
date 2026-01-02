@@ -28,12 +28,13 @@
       ansible.builtin.debug:
         var: ansible_facts.user_dir
 
-    - name: Include wpcli role
+    - name: Include wpcli role to install latest version
       ansible.builtin.include_role:
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]
         wpcli: true
         wpcli_apt_role: true
+        wpcli_version: latest
 
     - name: Include MariaDB role verify argument spec tasks
       ansible.builtin.include_role:

@@ -28,7 +28,7 @@
       ansible.builtin.debug:
         var: ansible_facts.user_dir
 
-    - name: Include wpcli role
+    - name: Include wpcli role to install nightly version
       ansible.builtin.include_role:
         name: wpcli
       vars:  # noqa var-naming[no-role-prefix]

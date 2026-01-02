@@ -280,9 +280,9 @@
           register: wpcli_which
           failed_when: wpcli_which.rc is not regex('0|1')
 
-        - name: Update WP-CLI nightly
+        - name: Update to the latest WP-CLI nightly
           ansible.builtin.command: wp cli update --nightly
-          changed_when: true
+          changed_when: false
           when: wpcli_which.rc == 0
 
       when: wpcli_version == "nightly"
