@@ -44,20 +44,20 @@ trixie:
   script:
     - pre-commit install
     - pre-commit run --all-files
-    - molecule test
+    - molecule test --all
 bookworm:
   image: registry.git.coop/webarch/containers/images/bookworm:20251204
   stage: bookworm
   script:
-    - molecule test
+    - molecule test --all
 forky:
   image: registry.git.coop/webarch/containers/images/forky:20251204
   stage: forky
   script:
-    - molecule test
+    - molecule test --all
 noble:
   image: registry.git.coop/webarch/containers/images/noble:20251204
   stage: noble
   script:
-    - molecule test
+    - molecule test --all
 ...
