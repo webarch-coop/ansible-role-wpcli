@@ -157,7 +157,7 @@
     - name: Set a fact for the required version of WP-CLI
       ansible.builtin.set_fact:
         wpcli_required: >-
-          {%- if wpcli_version is ansible.builtin.regex('^[latest|nightly]$') -%}
+          {%- if wpcli_version is ansible.builtin.regex('^latest|nightly$') -%}
           {{-     wpcli_latest -}}
           {%- else -%}
           {{-     wpcli_version -}}
