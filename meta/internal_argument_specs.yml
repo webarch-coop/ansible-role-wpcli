@@ -75,6 +75,14 @@ argument_specs:
         type: dict
         required: false
         description: The results of updating WP CLI to the latest nightly version.
+      wpcli_nightly_installed:
+        type: str
+        required: false
+        description: The installed version of WP-CLI nightly.
+      wpcli_nightly_version_check:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from running wp --version.
       wpcli_path_default:
         type: str
         required: false
@@ -95,5 +103,4 @@ argument_specs:
         type: dict
         required: false
         description: Internal dictionary with the results from running wp --version.
-
 ...

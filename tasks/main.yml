@@ -138,7 +138,7 @@
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
             msg: "WP-CLI version {{ wpcli_installed }} is installed at {{ wpcli_path }}"
-            verbosity: 1
+            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
 
       when: wpcli_which.rc == 0
 
@@ -311,7 +311,7 @@
             command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
             responses:
               '^.*Would you like to update to the latest nightly version?.*$': "y"
-          changed_when: true
+          changed_when: false
           register: wpcli_nightly
           when: wpcli_which.rc == 0
 
@@ -321,6 +321,33 @@
             verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
           tags:
             - debug
+
+        - name: Check which version of WP-CLI nightly is installed
+          ansible.builtin.command:
+            cmd: "{{ wpcli_path }} --version{% if ansible_facts.effective_user_id == 0 %} --allow-root{% endif %}"
+          check_mode: false
+          changed_when: false
+          register: wpcli_nightly_version_check
+
+        - name: Set a fact for the installed version of WP-CLI
+          ansible.builtin.set_fact:
+            wpcli_nightly_installed: "{{ wpcli_nightly_version_check.stdout_lines | ansible.builtin.last | ansible.builtin.regex_replace('^WP-CLI ') | ansible.builtin.trim | ansible.builtin.string }}"
+
+        - name: Print the installed version of WP-CLI
+          ansible.builtin.debug:
+            msg: "WP-CLI version {{ wpcli_nightly_installed }} is installed at {{ wpcli_path }}"
+            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
+          tags:
+            - debug
+
+        - name: WP-CLI updated to the latest nightly
+          ansible.builtin.debug:
+            msg: "WP-CLI updated to {{ wpcli_nightly_installed }}"
+          check_mode: false
+          changed_when: true
+          when: wpcli_installed != wpcli_nightly.stdout_lines[0]
+          tags:
+            - molecule-idempotence-notest
 
       when: wpcli_version == "nightly"
 
