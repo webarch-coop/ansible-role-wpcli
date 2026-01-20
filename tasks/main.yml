@@ -11,7 +11,7 @@
 - name: Skip the tasks in this role as wpcli is false
   ansible.builtin.debug:
     msg: "The wpcli variable need to be true for the tasks in this role to run."
-  when: not wpcli | bool
+  when: not wpcli | ansible.builtin.bool
   tags:
     - wpcli
 
@@ -20,7 +20,7 @@
 
     - name: Include WP-CLI verify variables tasks
       ansible.builtin.include_tasks: verify.yml
-      when: wpcli_verify | bool
+      when: wpcli_verify | ansible.builtin.bool
 
     - name: Use apt role local facts
       block:
@@ -58,7 +58,7 @@
             loop_var: wpcli_pkg
           when: ansible_facts.effective_user_id != 0
 
-      when: wpcli_apt_role | bool
+      when: (wpcli_apt_role | ansible.builtin.bool) or (ansible_facts.ansible_local.dpkg is defined)
 
     - name: Use Ansible package facts
       block:
@@ -88,7 +88,7 @@
             loop_var: wpcli_pkg
           when: ansible_facts.effective_user_id != 0
 
-      when: not wpcli_apt_role | bool
+      when: (not wpcli_apt_role | ansible.builtin.bool) or (ansible_facts.ansible_local.dpkg is not defined)
 
     - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command:
@@ -101,7 +101,7 @@
     - name: Debug wpcli_which
       ansible.builtin.debug:
         var: wpcli_which
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+        verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}2{% else %}3{% endif %}"
       tags:
         - debug
 
@@ -133,7 +133,7 @@
 
         - name: Set a fact for the installed version of WP-CLI
           ansible.builtin.set_fact:
-            wpcli_installed: "{{ wpcli_version_check.stdout_lines | last | regex_replace('^WP-CLI ') | trim | string }}"
+            wpcli_installed: "{{ wpcli_version_check.stdout_lines | ansible.builtin.last | ansible.builtin.regex_replace('^WP-CLI ') | ansible.builtin.trim | ansible.builtin.string }}"
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
@@ -156,12 +156,12 @@
       ansible.builtin.debug:
         msg:
           - "Location: {{ wpcli_headers.location }}"
-          - "Version: {{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
+          - "Version: {{ wpcli_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') | ansible.builtin.string }}"
         verbosity: 2
 
     - name: Set a fact for the latest version of WP-CLI
       ansible.builtin.set_fact:
-        wpcli_latest: "{{ wpcli_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
+        wpcli_latest: "{{ wpcli_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') | ansible.builtin.string }}"
 
     - name: Set a fact for the required version of WP-CLI
       ansible.builtin.set_fact:
@@ -237,7 +237,7 @@
               register: wpcli_gpg_verify_sig
               failed_when: ( "Good signature from" not in wpcli_gpg_verify_sig.stdout )
 
-          when: wpcli_gpg_verify | bool
+          when: wpcli_gpg_verify | ansible.builtin.bool
 
         - name: WP-CLI in place
           ansible.builtin.copy:
@@ -284,7 +284,7 @@
     - name: Debug wpcli_version
       ansible.builtin.debug:
         var: wpcli_version
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+        verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
       tags:
         - debug
 
@@ -302,7 +302,7 @@
         - name: Debug wpcli_which
           ansible.builtin.debug:
             var: wpcli_which
-            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}2{% else %}3{% endif %}"
           tags:
             - debug
 
@@ -311,12 +311,20 @@
             command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
             responses:
               '^.*Would you like to update to the latest nightly version?.*$': "y"
-          changed_when: false
+          changed_when: true
+          register: wpcli_nightly
           when: wpcli_which.rc == 0
+
+        - name: Debug wpcli_nightly.stdout_lines
+          ansible.builtin.debug:
+            var: wpcli_nightly.stdout_lines
+            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
+          tags:
+            - debug
 
       when: wpcli_version == "nightly"
 
-  when: wpcli | bool
+  when: wpcli | ansible.builtin.bool
   tags:
     - wpcli
 ...

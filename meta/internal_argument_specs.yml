@@ -71,6 +71,10 @@ argument_specs:
         type: str
         required: false
         description: The latest version of WP-CLI.
+      wpcli_nightly:
+        type: dict
+        required: false
+        description: The results of updating WP CLI to the latest nightly version.
       wpcli_path_default:
         type: str
         required: false
