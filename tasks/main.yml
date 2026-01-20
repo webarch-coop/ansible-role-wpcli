@@ -91,11 +91,19 @@
       when: not wpcli_apt_role | bool
 
     - name: Run which to check if and where WP-CLI is installed
-      ansible.builtin.command: "which {{ wpcli_name }}"
+      ansible.builtin.command:
+        cmd: "which {{ wpcli_name }}"
       check_mode: false
       changed_when: false
       register: wpcli_which
       failed_when: wpcli_which.rc is not regex('0|1')
+
+    - name: Debug wpcli_which
+      ansible.builtin.debug:
+        var: wpcli_which
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+      tags:
+        - debug
 
     - name: Set a fact to indicate that WP-CLI is not installed
       ansible.builtin.set_fact:
@@ -117,7 +125,8 @@
             - wpcli_path_default != wpcli_path
 
         - name: Check which version of WP-CLI is installed
-          ansible.builtin.command: "{{ wpcli_path }} --version{% if ansible_facts.effective_user_id == 0 %} --allow-root{% endif %}"
+          ansible.builtin.command:
+            cmd: "{{ wpcli_path }} --version{% if ansible_facts.effective_user_id == 0 %} --allow-root{% endif %}"
           check_mode: false
           changed_when: false
           register: wpcli_version_check
@@ -201,7 +210,8 @@
               changed_when: false
 
             - name: WP-CLI GPG public key imported
-              ansible.builtin.command: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
+              ansible.builtin.command:
+                cmd: "gpg --no-tty --import {{ wpcli_download_dir }}/A3A2E8F226F0BC06.asc"
               check_mode: false
               register: wpcli_gpg_import
               changed_when: ("not changed" not in wpcli_gpg_import.stderr)
@@ -217,10 +227,11 @@
               changed_when: false
 
             - name: WP-CLI GPG signature verified
-              ansible.builtin.command: >
-                gpg --no-tty --verify --logger-fd 1
-                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar.asc
-                {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar
+              ansible.builtin.command:
+                cmd: >-
+                     gpg --no-tty --verify --logger-fd 1
+                     {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar.asc
+                     {{ wpcli_download_dir }}/wp-cli-{{ wpcli_required }}.phar
               check_mode: false
               changed_when: false
               register: wpcli_gpg_verify_sig
@@ -270,15 +281,30 @@
         ((wpcli_installed is version(wpcli_required, 'ne')) and
         (wpcli_version != "nightly"))
 
+    - name: Debug wpcli_version
+      ansible.builtin.debug:
+        var: wpcli_version
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+      tags:
+        - debug
+
     - name: WP-CLI nightly
       block:
 
         - name: Run which to check if and where WP-CLI is installed
-          ansible.builtin.command: "which {{ wpcli_name }}"
+          ansible.builtin.command:
+            cmd: "which {{ wpcli_name }}"
           check_mode: false
           changed_when: false
           register: wpcli_which
           failed_when: wpcli_which.rc is not regex('0|1')
+
+        - name: Debug wpcli_which
+          ansible.builtin.debug:
+            var: wpcli_which
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+          tags:
+            - debug
 
         - name: Update to the latest WP-CLI nightly
           ansible.builtin.expect:
