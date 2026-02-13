@@ -11,7 +11,7 @@
 repos:
   # https://github.com/adrienverge/yamllint/tags
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         name: YAML Lint
@@ -34,7 +34,7 @@ repos:
           - 'README.md'
   # https://github.com/ansible/ansible-lint/releases
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v25.12.1
+    rev: v26.1.1
     hooks:
       - id: ansible-lint
         name: Ansible Lint
