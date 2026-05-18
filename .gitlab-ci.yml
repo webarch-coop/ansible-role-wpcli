@@ -38,26 +38,32 @@ stages:
   - bookworm
   - forky
   - noble
+  - resolute
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20260129
+  image: registry.git.coop/webarch/containers/images/trixie:20260424
   stage: trixie
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test --all
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20260129
+  image: registry.git.coop/webarch/containers/images/bookworm:20260424
   stage: bookworm
   script:
     - molecule test --all
 forky:
-  image: registry.git.coop/webarch/containers/images/forky:20260129
+  image: registry.git.coop/webarch/containers/images/forky:20260424
   stage: forky
   script:
     - molecule test --all
 noble:
-  image: registry.git.coop/webarch/containers/images/noble:20260129
+  image: registry.git.coop/webarch/containers/images/noble:20260424
   stage: noble
+  script:
+    - molecule test --all
+resolute:
+  image: registry.git.coop/webarch/containers/images/resolute:20260424
+  stage: resolute
   script:
     - molecule test --all
 ...
