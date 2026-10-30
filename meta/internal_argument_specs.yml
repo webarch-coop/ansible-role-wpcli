@@ -78,10 +78,14 @@ argument_specs:
         type: str
         required: false
         description: The latest version of WP-CLI.
-      wpcli_nightly:
+      wpcli_nightly_chroot:
         type: dict
         required: false
-        description: The results of updating WP CLI to the latest nightly version.
+        description: The results of updating WP CLI to the latest nightly version when the init system is systemd.
+      wpcli_nightly_systemd:
+        type: dict
+        required: false
+        description: The results of updating WP CLI to the latest nightly version in a chroot.
       wpcli_nightly_installed:
         type: str
         required: false
