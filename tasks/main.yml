@@ -336,7 +336,7 @@
             mode: "0644"
 
       when: >-
-        (wpcli_which.rc == 1) or
+        (wpcli_installed == null) or
         ((wpcli_installed != wpcli_required) and
         (wpcli_version != "nightly") and
         (wpcli_required != "nightly")
@@ -344,21 +344,6 @@
 
     - name: WP-CLI nightly
       block:
-
-        - name: Run which to check if and where WP-CLI is installed
-          ansible.builtin.command:
-            cmd: "which {{ wpcli_name }}"
-          check_mode: false
-          changed_when: false
-          register: wpcli_which
-          failed_when: wpcli_which.rc is not regex('0|1')
-
-        - name: Debug wpcli_which
-          ansible.builtin.debug:
-            var: wpcli_which
-            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}2{% else %}3{% endif %}"
-          tags:
-            - debug
 
         - name: Update to the latest WP-CLI nightly when the init system is systemd
           block:
@@ -430,7 +415,7 @@
             - molecule-idempotence-notest
 
       when:
-        - wpcli_which.rc == 0
+        - wpcli_installed != null
         - wpcli_version == "nightly"
         - wpcli_required == "nightly"
 
