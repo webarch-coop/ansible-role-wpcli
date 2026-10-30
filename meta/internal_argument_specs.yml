@@ -55,6 +55,13 @@ argument_specs:
         type: dict
         required: false
         description: Internal dictionary with the results from ansible.builtin.uri from checking the HTTP headers of the latest URL.
+      wpcli_init:
+        type: str
+        required: false
+        description: Internal variable for the system init version.
+        choices:
+          - chroot
+          - systemd
       wpcli_installed:
         type: str
         required: false
@@ -91,6 +98,10 @@ argument_specs:
         type: str
         required: false
         description: The WP-CLI path.
+      wpcli_ps:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from runing ps.
       wpcli_required:
         type: str
         required: false

@@ -90,6 +90,32 @@
 
       when: (not wpcli_apt_role | ansible.builtin.bool) or (ansible_facts.ansible_local.dpkg is not defined)
 
+    # When in a docker container wpcli_init.stdout == "sh" or "bash"
+    - name: Check if system has been booted with systemd as init system
+      ansible.builtin.command:
+        cmd: "ps -p 1 -o comm="
+      changed_when: false
+      check_mode: false
+      register: wpcli_ps
+      failed_when: wpcli_ps.rc is not regex('^0|47$')
+
+    - name: Set a fact for the init system
+      ansible.builtin.set_fact:
+        wpcli_init: "{{ wpcli_ps.stdout }}"
+      when: wpcli_ps.rc == 0
+
+    - name: When the init check exit code is 47 assume is is because this is a chroot
+      ansible.builtin.set_fact:
+        wpcli_init: chroot
+      when: wpcli_ps.rc == 47
+
+    - name: Debug the ini system
+      ansible.builtin.debug:
+        var: wpcli_init
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
+      tags:
+        - debug
+
     - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command:
         cmd: "which {{ wpcli_name }}"
@@ -306,21 +332,45 @@
           tags:
             - debug
 
-        - name: Update to the latest WP-CLI nightly
-          ansible.builtin.expect:
-            command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
-            responses:
-              '^.*Would you like to update to the latest nightly version?.*$': "y"
-          changed_when: false
-          register: wpcli_nightly
-          when: wpcli_which.rc == 0
+        - name: Update to the latest WP-CLI nightly when the init system is systemd
+          block:
 
-        - name: Debug wpcli_nightly.stdout_lines
-          ansible.builtin.debug:
-            var: wpcli_nightly.stdout_lines
-            verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
-          tags:
-            - debug
+            - name: Update to the latest WP-CLI nightly
+              ansible.builtin.expect:
+                command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
+                responses:
+                  '^.*Would you like to update to the latest nightly version?.*$': "y"
+              changed_when: false
+              register: wpcli_nightly_systemd
+              when: wpcli_which.rc == 0
+
+            - name: Debug wpcli_nightly_systemd.stdout_lines
+              ansible.builtin.debug:
+                var: wpcli_nightly_systemd.stdout_lines
+                verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
+              tags:
+                - debug
+
+          when: wpcli_init == "systemd"
+
+        - name: Update to the latest WP-CLI nightly in a chroot
+          block:
+
+            - name: Update to the latest WP-CLI nightly
+              ansible.builtin.expect:
+                command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly --yes"
+              changed_when: false
+              register: wpcli_nightly_chroot
+              when: wpcli_which.rc == 0
+
+            - name: Debug wpcli_nightly_chroot.stdout_lines
+              ansible.builtin.debug:
+                var: wpcli_nightly_chroot.stdout_lines
+                verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
+              tags:
+                - debug
+
+          when: wpcli_init == "chroot"
 
         - name: Check which version of WP-CLI nightly is installed
           ansible.builtin.command:
