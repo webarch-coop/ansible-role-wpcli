@@ -102,6 +102,14 @@ argument_specs:
         type: str
         required: false
         description: The WP-CLI path.
+      wpcli_php:
+        type: dict
+        required: false
+        description: Internal variable for the path to the latest version of php.
+      wpcli_php_alternatives:
+        type: dict
+        required: false
+        description: Internal dictionary with the results from running update-alternatives --list php.
       wpcli_ps:
         type: dict
         required: false
