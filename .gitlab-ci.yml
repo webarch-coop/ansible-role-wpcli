@@ -33,6 +33,9 @@ before_script:
   - yamllint --version
   - which molecule
   - molecule --version
+  - apt update
+  - apt upgrade -y
+  - apt install php-cli -y
 stages:
   - trixie
   - bookworm

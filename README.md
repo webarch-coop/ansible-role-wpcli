@@ -4,6 +4,8 @@
 
 This repository contains an Ansible role for installing and upgrading [WP-CLI](https://wp-cli.org/) on Debian and Ubuntu servers.
 
+This role requires a version of `php-cli` to be installed but it doesn't install one.
+
 ## Role Variables
 
 See the [default variables](defaults/main.yml), set `wpcli` to `true` for the tasks in this role to be run, the other defaults should only need changing if this role isn't run as `root`.
