@@ -234,7 +234,7 @@
       ansible.builtin.debug:
         msg:
           - "wpcli_version specified is {{ wpcli_version }}"
-          - "wpcli_installed is version {{ wpcli_installed }}"
+          - "wpcli_installed is version {% if wpcli_installed | ansible.builtin.type_debug != 'NoneType' %}{{ wpcli_installed }}{% else %}N/A{% endif %}"
           - "wpcli_latest is version {{ wpcli_latest }}"
           - "wpcli_required version {{ wpcli_required }}"
 
@@ -336,7 +336,7 @@
             mode: "0644"
 
       when: >-
-        (wpcli_installed | ansible.builtin.length == 0) or
+        (wpcli_installed | ansible.builtin.type_debug == "NoneType") or
         ((wpcli_installed != wpcli_required) and
         (wpcli_version != "nightly") and
         (wpcli_required != "nightly")
@@ -415,7 +415,7 @@
             - molecule-idempotence-notest
 
       when:
-        - wpcli_installed | ansible.builtin.length > 0
+        - wpcli_installed | ansible.builtin.type_debug != "NoneType"
         - wpcli_version == "nightly"
         - wpcli_required == "nightly"
 
