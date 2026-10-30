@@ -116,6 +116,31 @@
       tags:
         - debug
 
+    - name: Check PHP versions
+      ansible.builtin.command:
+        cmd: update-alternatives --list php
+      check_mode: false
+      changed_when: false
+      register: wpcli_php_alternatives
+
+    - name: Debug wpcli_php_alternatives.stdout_lines
+      ansible.builtin.debug:
+        var: wpcli_php_alternatives
+        verbosity: "{% if ansible_check_mode | bool %}1{% else %}2{% endif %}"
+      tags:
+        - debug
+
+    - name: Set a fact for the latest php present
+      ansible.builtin.set_fact:
+        wpcli_php: "{{ wpcli_php_alternatives.stdout_lines | ansible.builtin.last }}"
+
+    - name: Debug wpcli_php
+      ansible.builtin.debug:
+        var: wpcli_php
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
+      tags:
+        - debug
+
     - name: Run which to check if and where WP-CLI is installed
       ansible.builtin.command:
         cmd: "which {{ wpcli_name }}"
@@ -159,7 +184,12 @@
 
         - name: Set a fact for the installed version of WP-CLI
           ansible.builtin.set_fact:
-            wpcli_installed: "{{ wpcli_version_check.stdout_lines | ansible.builtin.last | ansible.builtin.regex_replace('^WP-CLI ') | ansible.builtin.trim | ansible.builtin.string }}"
+            wpcli_installed: >-
+              {{ wpcli_version_check.stdout_lines
+              | ansible.builtin.last
+              | ansible.builtin.regex_replace('^WP-CLI ')
+              | ansible.builtin.trim
+              | ansible.builtin.string }}
 
         - name: Print the installed version of WP-CLI
           ansible.builtin.debug:
@@ -192,8 +222,10 @@
     - name: Set a fact for the required version of WP-CLI
       ansible.builtin.set_fact:
         wpcli_required: >-
-          {%- if wpcli_version is ansible.builtin.regex('^latest|nightly$') -%}
+          {%- if wpcli_version == "latest" -%}
           {{-     wpcli_latest -}}
+          {% elif wpcli_version == "nightly" -%}
+          nightly
           {%- else -%}
           {{-     wpcli_version -}}
           {%- endif -%}
@@ -201,6 +233,7 @@
     - name: Debug the installed, latest and required version of WP-CLI
       ansible.builtin.debug:
         msg:
+          - "wpcli_version specified is {{ wpcli_version }}"
           - "wpcli_installed is version {{ wpcli_installed }}"
           - "wpcli_latest is version {{ wpcli_latest }}"
           - "wpcli_required version {{ wpcli_required }}"
@@ -273,7 +306,7 @@
             owner: "{{ wpcli_owner }}"
             group: "{{ wpcli_group }}"
             mode: "0755"
-            validate: php %s --info
+            validate: "{{ wpcli_php }} %s --info"
 
         - name: Bash completion directory present
           ansible.builtin.file:
@@ -304,15 +337,10 @@
 
       when: >-
         (wpcli_which.rc == 1) or
-        ((wpcli_installed is version(wpcli_required, 'ne')) and
-        (wpcli_version != "nightly"))
-
-    - name: Debug wpcli_version
-      ansible.builtin.debug:
-        var: wpcli_version
-        verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
-      tags:
-        - debug
+        ((wpcli_installed != wpcli_required) and
+        (wpcli_version != "nightly") and
+        (wpcli_required != "nightly")
+        (wpcli_installed is ansible.builtin.version('1.0.0', 'gt', version_type='semver')))
 
     - name: WP-CLI nightly
       block:
@@ -335,19 +363,19 @@
         - name: Update to the latest WP-CLI nightly when the init system is systemd
           block:
 
-            - name: Update to the latest WP-CLI nightly
+            - name: Update to the latest WP-CLI nightly using expect
               ansible.builtin.expect:
                 command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly"
                 responses:
                   '^.*Would you like to update to the latest nightly version?.*$': "y"
-              changed_when: false
               register: wpcli_nightly_systemd
-              when: wpcli_which.rc == 0
+              changed_when: ("Updated WP-CLI to the latest nightly release" in wpcli_nightly_systemd.stdout)
 
             - name: Debug wpcli_nightly_systemd.stdout_lines
               ansible.builtin.debug:
                 var: wpcli_nightly_systemd.stdout_lines
                 verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
+              when: wpcli_nightly_systemd.stdout_lines is defined
               tags:
                 - debug
 
@@ -357,16 +385,16 @@
           block:
 
             - name: Update to the latest WP-CLI nightly
-              ansible.builtin.expect:
-                command: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly --yes"
-              changed_when: false
+              ansible.builtin.command:
+                cmd: "wp {% if ansible_facts.effective_user_id == 0 %}--allow-root {% endif %}--no-color cli update --nightly --yes"
+              changed_when: ("Updated WP-CLI to the latest nightly release" in wpcli_nightly_systemd.stdout)
               register: wpcli_nightly_chroot
-              when: wpcli_which.rc == 0
 
             - name: Debug wpcli_nightly_chroot.stdout_lines
               ansible.builtin.debug:
                 var: wpcli_nightly_chroot.stdout_lines
                 verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}0{% else %}1{% endif %}"
+              when: wpcli_nightly_chroot.stdout_lines is defined
               tags:
                 - debug
 
@@ -395,11 +423,16 @@
             msg: "WP-CLI updated to {{ wpcli_nightly_installed }}"
           check_mode: false
           changed_when: true
-          when: wpcli_installed != wpcli_nightly.stdout_lines[0]
+          when: >-
+            ((wpcli_installed_chroot is defined) and (wpcli_installed_chroot != wpcli_nightly_chroot.stdout_lines[0])) or
+            ((wpcli_installed_systemd is defined) and (wpcli_installed_systemd != wpcli_nightly_chroot.stdout_lines[0]))
           tags:
             - molecule-idempotence-notest
 
-      when: wpcli_version == "nightly"
+      when:
+        - wpcli_which.rc == 0
+        - wpcli_version == "nightly"
+        - wpcli_required == "nightly"
 
   when: wpcli | ansible.builtin.bool
   tags:
