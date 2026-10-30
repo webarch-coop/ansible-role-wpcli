@@ -336,7 +336,7 @@
             mode: "0644"
 
       when: >-
-        (wpcli_installed == null) or
+        (wpcli_installed | ansible.builtin.length == 0) or
         ((wpcli_installed != wpcli_required) and
         (wpcli_version != "nightly") and
         (wpcli_required != "nightly")
@@ -415,7 +415,7 @@
             - molecule-idempotence-notest
 
       when:
-        - wpcli_installed != null
+        - wpcli_installed | ansible.builtin.length > 0
         - wpcli_version == "nightly"
         - wpcli_required == "nightly"
 
